@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "ResonbrockExample", "ResonbrockExample\ResonbrockExample.vfproj", "{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}"
+EndProject
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "HYMODexample", "HYMODexample\HYMODexample.vfproj", "{8A396F93-9C67-470C-B3EB-0409C0414B5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}.Debug|Win32.Build.0 = Debug|Win32
+		{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}.Release|Win32.ActiveCfg = Release|Win32
+		{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}.Release|Win32.Build.0 = Release|Win32
+		{8A396F93-9C67-470C-B3EB-0409C0414B5E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8A396F93-9C67-470C-B3EB-0409C0414B5E}.Debug|Win32.Build.0 = Debug|Win32
+		{8A396F93-9C67-470C-B3EB-0409C0414B5E}.Release|Win32.ActiveCfg = Release|Win32
+		{8A396F93-9C67-470C-B3EB-0409C0414B5E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
