@@ -161,7 +161,6 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
    REAL(rk), ALLOCATABLE :: h(:), r(:), rBest(:), rl(:), rh(:), xl(:), xh(:), xBest(:), Ja(:,:), g(:), He(:,:), xScale(:),  &
                             xt(:), xp(:), delX(:), delXRdc(:), HeRdc(:,:), gRdc(:), xls(:), hLo(:), hHi(:),       &
                             xOldBest(:), tsv(:), fOptSeries(:), delXAct(:)
-   INTEGER(ik):: status
    INTEGER(ik), PARAMETER :: BF=0, BL=1, BFL=2, BH=3, BFH=4,                       &
                              NUL_CON=-1, GRAD_CON=0, SEARCH_CON=1, FRED_CON=2
    !CHARACTER(100) :: mess
@@ -169,7 +168,7 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
    ! Allocate work arrays
       error = 0
       ALLOCATE (h(p), r(n), rBest(n), rl(n), rh(n), xl(p), xh(p), xBest(p), Ja(n,p), g(p), He(p,p), as(p), xScale(p), &
-                xp(p), xt(p), delX(p), xls(p), hLo(p), hHi(p), xOldbest(p), fOptSeries(cnv%iterMax), delXAct(p),STAT=status)        
+                xp(p), xt(p), delX(p), xls(p), hLo(p), hHi(p), xOldbest(p), fOptSeries(cnv%iterMax), delXAct(p))        
       IF (cnv%dumpResults >= 1) THEN
          OPEN (unit=99, file=cnv%logFile, status='unknown')
       END IF
@@ -433,8 +432,7 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
             IF (noRelChangeF >= cnv%noRelChangeF) THEN
               info%termFlag = 2; EXIT
             ENDIF
-            
-			   noReduction = MERGE (noReduction+1, 0, f >= fOldBest)
+            noReduction = MERGE (noReduction+1, 0, f >= fOldBest)
             IF (noReduction >= cnv%noReduction) THEN
                info%termFlag = 3; EXIT
             END IF
