@@ -490,6 +490,9 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
          WRITE(99,'(a,f10.3)') '                         cpu time (sec): ', info%cpuTime
          CLOSE (unit=99)
       END IF
+   ! Deallocate memory
+      DEALLOCATE (h, r, rBest, rl, rh, xl, xh, xBest, Ja, g, He, as, xScale, &
+                  xp, xt, delX, xls, hLo, hHi, xOldbest, fOptSeries, delXAct)        
       RETURN
    !
    ! Error states
