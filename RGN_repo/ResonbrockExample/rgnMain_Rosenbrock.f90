@@ -22,19 +22,19 @@ PROGRAM testRGN
    PAUSE
 END PROGRAM testRGN
 
-SUBROUTINE objFunc (p, n, x, r, f, ok)
-   USE constantsMod
+SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
+   USE constantsMod, ONLY: ik, rk
    IMPLICIT NONE
-   INTEGER(ik), INTENT(in) :: p                     ! Number of parameters
-   INTEGER(ik), INTENT(in) :: n                     ! Number of data
-   REAL(rk), INTENT(in)    :: x(:)                  ! Parameters
-   REAL(rk), INTENT(out)   :: r(:)                  ! Residuals
-   REAL(rk), INTENT(out)   :: f                     ! Objective function value = Sum of squared residuals
-   LOGICAL, INTENT(out)    :: ok
+   INTEGER(ik), INTENT(in) :: nPar
+   INTEGER(ik),INTENT(in):: nSim
+   REAL(rk), INTENT(in) :: x(:)
+   REAL(rk), INTENT(out) :: r(:)
+   REAL(rk), INTENT(out):: f
+   INTEGER(ik), INTENT(out):: error
+   CHARACTER(100),INTENT(out) :: message
    INTEGER(ik) :: i
    !---
    !
-   ok = .true.                                      ! Calculate residual and objective function value of Rosenbrock function
    f = 0.0_rk
    r(1) = 1-x(1)
    r(2)=10.0_rk*(x(2)-x(1)**2)                      ! Compute residual
