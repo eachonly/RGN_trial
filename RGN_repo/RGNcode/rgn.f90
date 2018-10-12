@@ -1,28 +1,3 @@
-!MIT License
-!
-!Copyright (c) 2018-2028 Youwei Qin, Dmitri Kavetski, George Kuczera
-!
-!Permission is hereby granted, free of charge, to any person obtaining a copy
-!of this software and associated documentation files (the "Software"), to deal
-!in the Software without restriction, including without limitation the rights
-!to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-!copies of the Software, and to permit persons to whom the Software is
-!furnished to do so, subject to the following conditions:
-!
-!The above copyright notice and this permission notice shall be included in all
-!copies or substantial portions of the Software.
-!
-!The references (Qin2018a and Qin2018b) should be cited in the journal papers,
-!conference papers, technical reports, lecture notes, and softwares that used this code.
-!
-!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-!IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-!FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-!AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-!LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-!OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-!SOFTWARE.
-
 !******************************************************************
 !
 ! Purpose: Optimize SLS Objective Function with Robust Gauss-Newton Algorithm
@@ -34,18 +9,18 @@
 ! References
 ! * Qin2018a: Youwei Qin, Kavetski Dmitri, George Kuczera (2018),
 !            A Robust Gauss-Newton algorithm for the optimization of hydrological models: From standard Gauss-Newton to Robust Gauss-Newton,
-!            Water Resources Research, doi:10.1029/2017WR022488
+!            Water Resources Research, accept
 
 ! * Qin2018b: Youwei Qin, Kavetski Dmitri, George Kuczera (2018),
 !            A Robust Gauss-Newton algorithm for the optimization of hydrological models: Benchmarking against industry-standard algorithms,
-!            Water Resources Research, doi:10.1029/2017WR022489
+!            Water Resources Research, accept
 !
 !******************************************************************
 ! ---
 ! Input
 !   p:          Number of parameters
 !   n:          Number of observations in calibration
-!   xo:         Initial parameters
+!   x0:         Initial parameters
 !   xLo:        Lower bounds on parameters
 !   xHi(:):     Upper bounds on parameters
 !   cnv:        Convergence data structure
@@ -112,7 +87,7 @@ SUBROUTINE setDefaultRgnConvergeSettings (cnvSet, iterMax, dump, logFile, fail)
       
       cnvSet%noRelChangeParTol = 1.0e-5_rk
       cnvSet%noRelChangePar = 5
-      cnvSet%tolSafe = 1.0e-14_rk
+	  cnvSet%tolSafe = 1.0e-14_rk
       
       cnvSet%dumpResults = 0; IF (PRESENT(dump)) cnvSet%dumpResults = dump
       
@@ -147,12 +122,12 @@ END SUBROUTINE setRgnConstants
 !
 !
 ! Robust Gauss-Newton code based on Qin2018a   
-SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFile)
+SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFile)
    IMPLICIT NONE
    EXTERNAL :: objFunc
    INTEGER(ik), INTENT(in)            :: p        ! Number of parameters
    INTEGER(ik), INTENT(in)            :: n        ! Number of observations in calibration
-   REAL(rk), INTENT(in)               :: xo(:)    ! Initial parameters
+   REAL(rk), INTENT(in)               :: x0(:)    ! Initial parameters
    REAL(rk), INTENT(in)               :: xLo(:)   ! Lower bounds on parameters
    REAL(rk), INTENT(in)               :: xHi(:)   ! Upper bounds on parameters
    TYPE (rgnConvType), INTENT(in)     :: cnv      ! Convergence data structure
@@ -185,22 +160,22 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
                scaledS, scaledfExp, scaledfAct, fredAct, fOldBest, maxRelPar, time(2), gradDf, hessDf
    REAL(rk), ALLOCATABLE :: h(:), r(:), rBest(:), rl(:), rh(:), xl(:), xh(:), xBest(:), Ja(:,:), g(:), He(:,:), xScale(:),  &
                             xt(:), xp(:), delX(:), delXRdc(:), HeRdc(:,:), gRdc(:), xls(:), hLo(:), hHi(:),       &
-                            xOldBest(:), tsv(:), fOptSeries(:), delXAct(:)
+                            x0ldBest(:), tsv(:), fOptSeries(:), delXAct(:)
+   INTEGER(ik):: status
    INTEGER(ik), PARAMETER :: BF=0, BL=1, BFL=2, BH=3, BFH=4,                       &
                              NUL_CON=-1, GRAD_CON=0, SEARCH_CON=1, FRED_CON=2
    CHARACTER(20) :: dfm(4)
    !CHARACTER(100) :: mess
    !----
    ! Allocate work arrays
-      error = 0
       ALLOCATE (h(p), r(n), rBest(n), rl(n), rh(n), xl(p), xh(p), xBest(p), Ja(n,p), g(p), He(p,p), as(p), xScale(p), &
-                xp(p), xt(p), delX(p), xls(p), hLo(p), hHi(p), xOldbest(p), fOptSeries(cnv%iterMax), delXAct(p))        
+                xp(p), xt(p), delX(p), xls(p), hLo(p), hHi(p), x0ldbest(p), fOptSeries(cnv%iterMax), delXAct(p),STAT=status)        
       IF (cnv%dumpResults >= 1) THEN
          OPEN (unit=99, file=cnv%logFile, status='unknown')
          WRITE(dfm(1),'(a,i4,a)') '(a,', p,'g15.7)'
-         WRITE(dfm(2),'(a,i4,a)') '(a,', p,'i5)'
-         WRITE(dfm(3),'(a,i4,a)') '(9x,', p,'g15.7)'
-         WRITE(dfm(4),'(a,i4,a)') '(a,', p,'i15)'
+         WRITE(dfm(2),'(a,i4,a)') '(a,', p,'i3)'
+         WRITE(dfm(3),'(a,i4,a)') '(33x,', p,'g15.7)'
+         WRITE(dfm(4),'(a,i4,a)') '(a,', p,'(i4,11x))'
       END IF
    !
    ! Assign constants
@@ -216,7 +191,7 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
       noReduction = 0; noRelChangeF = 0; noRelChangePar = 0
       info%termFlag = 0; info%nEval = 0
       CALL CPU_TIME (time(1))
-      x = xo
+      x = x0
       CALL objFunc (nPar=p, nSim=n, x=x, r=rBest, f=f, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
       fBest = f; xBest = x    
       !CALL userRunTimeMessage ('Starting RGN', -1)
@@ -226,30 +201,30 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
          nIter = nIter + 1
    !
    ! Save best result from previous iteration
-         fOldBest = fBest; xOldbest = xBest
+         fOldBest = fBest; x0ldbest = xBest
          !CALL userRunTimeMessage (mess, -1)
          IF (cnv%dumpResults >= 1) THEN
             WRITE(99,'(a)')          '-----------------------------------------'
-            WRITE(99,'(a,i5)')       'Iter=', nIter
-            WRITE(99,'(a,i5)')       'ObjFun Calls=', info%nEval
-            WRITE(99,'(a,g15.7)')    '   f=', f
-            WRITE(99,dfm(1))         '   x=', x
-            WRITE(99,dfm(2))         '  bd=', MERGE(-1, MERGE(0, 1, x(1:p) <= xHi(1:p)), x(1:p) < xLo(1:p))
-            WRITE(99,dfm(1))         '   h=', h
+            WRITE(99,'(a,i5)')       'Iteration No.=                 ', nIter
+            WRITE(99,'(a,i5)')       'ObjFun Calls=                  ', info%nEval
+            WRITE(99,'(a,g15.7)')    'ObjFun Value f=                 ', f
+            WRITE(99,dfm(1))         'Parameter set=                  ', x
+            WRITE(99,dfm(4))         'Bound Index=                    ', MERGE(-1, MERGE(0, 1, x(1:p) <= xHi(1:p)), x(1:p) < xLo(1:p))
+            WRITE(99,dfm(1))         'Sampling Scale h=               ', h
          END IF
    !
    ! Get Jacobian and update best function result
          xh = x; xl = x; r = rBest
          DO k = 1, p
             xh(k) = x(k) + h(k); xh(k) = MIN(xHi(k), xh(k))
-            IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) '  Jacobian xh:', xh
+            IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) 'Forward Jacoian sample point:   ', xh
             CALL objFunc (nPar=p, nSim=n, x=xh, r=rh, f=fh, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1; CALL updateBest (fh, xh, rh)
             xl(k) = x(k) - h(k); xl(k) = MAX(xLo(k), xl(k))
-            IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) '  Jacobian xl:', xl
+            IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) 'Backward Jacobian sample Point: ', xl
             CALL objFunc (nPar=p, nSim=n, x=xl, r=rl, f=fl, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1; CALL updateBest (fl, xl, rl)
             Ja(:,k) = (rh-rl)/(xh(k)-xl(k))
             xh(k) = x(k); xl(k) = x(k)
-            IF (cnv%dumpResults >= 2) WRITE(99,'(a,i5,2g15.7)') '  Jacobian column:', k, fh, fl
+            IF (cnv%dumpResults >= 2) WRITE(99,'(a,i3,2g15.7)') 'Jacobian matrix column:          ', k, fh, fl
          END DO
    !
    ! Calculate gradient and Hessian
@@ -275,12 +250,12 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
          END DO
          
          IF (cnv%dumpResults >= 2) THEN
-            WRITE(99,'(a,g15.7)')      '  Best f=', fBest
-            WRITE(99,dfm(1))           '  Best x=', xBest
-            WRITE(99,dfm(1))           '  g     =', g
-            WRITE(99,dfm(1))           '  hess  =', He(1,1)
+            WRITE(99,'(a,g15.7)')      'Best objective function value f=', fBest
+            WRITE(99,dfm(1))           'Best parameter x=               ', xBest
+            WRITE(99,dfm(1))           'Gradient g at parameter x=       ', g
+            WRITE(99,dfm(1))           'Hessian at x=                    ', He(1,1)
             DO j = 2, p
-               WRITE(99,dfm(3)) He(j,1:j)
+               WRITE(99,dfm(3))         He(j,1:j)
             END DO
          END IF         
    !
@@ -346,7 +321,7 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
          END IF
    !
    ! Solve normal equations after removing non-free parameters
-         IF (cnv%dumpResults >= 2) WRITE(99,dfm(2)) '  Active set=', as
+         IF (cnv%dumpResults >= 2) WRITE(99,dfm(4)) 'Active set=                     ', as
          nr = SUM(MERGE(1, 0, as == BF))
          ALLOCATE (HeRdc(nr,nr), delXRdc(nr), gRdc(nr), tsv(nr))
          j = 0
@@ -372,16 +347,16 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
                delX(k) = 0.0_rk
             END IF
          END DO
-         IF (cnv%dumpResults >= 1) WRITE(99,dfm(1)) '    Truncated SV=', tsv
+         IF (cnv%dumpResults >= 1) WRITE(99,dfm(1)) 'Truncated SV=                   ', tsv
    !
    ! Project search step onto box constraints
-         IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) '        SVD delX=', delX
+         IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) 'SVD delX=                       ', delX
          xt = x + delX
          xp = MIN(xHi, MAX(xLo, xt))
          delX = xp - x
          IF (cnv%dumpResults >= 2) THEN
-            WRITE(99,dfm(1)) '  Projected delX=', delX
-            WRITE(99,dfm(1)) '    Projected xp=', xp
+            WRITE(99,dfm(1)) 'Projected delX=                 ', delX
+            WRITE(99,dfm(1)) 'Projected xp=                   ', xp
          END IF
    !
    ! Update delXRdc for calculation fredExp
@@ -402,26 +377,26 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
    ! Perform inexact line search
          sig = MIN (set%sigma, 1.0_rk)
          cons = set%c1*MIN(0.0_rk, DOT_PRODUCT(delX,g))
-         IF (cnv%dumpResults >= 3) WRITE(99,'(a,g15.7)') '  Cons=', cons
+         IF (cnv%dumpResults >= 3) WRITE(99,'(a,g15.7)') 'Cons=                            ', cons
          flag_ls = NO
          DO i = 0, set%nls
             xt = x + sig*delX
             CALL objFunc (nPar=p, nSim=n, x=xt, r=rl, f=ft, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
             IF (cnv%dumpResults >= 3) THEN
-                WRITE(99,dfm(1))           '  xt=', xt
-                WRITE(99,'(a,g15.7)')      '  ft=', ft
-                WRITE(99,'(a,g15.7)')      ' ft+sig=',ft + sig*cons
+                WRITE(99,dfm(1))           'xt=                             ', xt
+                WRITE(99,'(a,g15.7)')      'ft=                             ', ft
+                WRITE(99,'(a,g15.7)')      'ft+sig=                         ',ft + sig*cons
             END IF
             IF (ft < f + sig*cons) THEN  
                xls = xt; fls = ft; flag_ls = YES
-               IF (cnv%dumpResults >= 1) WRITE(99,'(a,i4,a,g15.7)') '  Line search successful at iteration', i, ' with sigma=', sig
+               IF (cnv%dumpResults >= 1) WRITE(99,'(a,i4,a,g15.7)') 'Line search successful at iteration', i ,' with sigma=', sig
                EXIT
             ELSE
                sig = set%rho*sig
             END IF
          END DO
          IF (.not.flag_ls) THEN
-            IF (cnv%dumpResults >= 1) WRITE(99,'(a)') '  Line failed'
+            IF (cnv%dumpResults >= 1) WRITE(99,'(a,i4,a,g15.7)') 'Line search failed'
             fls = f; xls = x        
          END IF
          fredAct = fls - f
@@ -462,7 +437,8 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
             IF (noRelChangeF >= cnv%noRelChangeF) THEN
               info%termFlag = 2; EXIT
             ENDIF
-            noReduction = MERGE (noReduction+1, 0, f >= fOldBest)
+            
+			   noReduction = MERGE (noReduction+1, 0, f >= fOldBest)
             IF (noReduction >= cnv%noReduction) THEN
                info%termFlag = 3; EXIT
             END IF
@@ -470,7 +446,7 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
             maxRelPar = -HUGE(f)
             DO k = 1, p
                IF (as(k) == BF) THEN
-                  maxRelPar = MAX (maxRelPar, ABS((xOldBest(k)-x(k))/(xOldBest(k)+cnv%tolsafe)))
+                  maxRelPar = MAX (maxRelPar, ABS((x0ldBest(k)-x(k))/(x0ldBest(k)+cnv%tolsafe)))
                END IF
             END DO
             noRelChangePar = MERGE (noRelChangePar+1, 0, maxRelPar >= 0.0_rk .and. maxRelPar < cnv%noRelChangeParTol)
@@ -485,14 +461,11 @@ SUBROUTINE rgn (objFunc, p, n, xo, xLo, xHi, cnv, x, info, error, message, decFi
       info%nIter = nIter; info%f = f
       WRITE(message,'(a,i2,a,g15.6)') 'RGN ended with termination code: ', info%termFlag, ' f=', info%f
       IF (cnv%dumpResults >= 1) THEN
-         WRITE(99,'(a,i2)')    '>>>>>   RGN ended with termination code: ', info%termFlag
-         WRITE(99,'(a,i8)')    '               number of function calls: ', info%nEval
-         WRITE(99,'(a,f10.3)') '                         cpu time (sec): ', info%cpuTime
+         WRITE(99,'(a,i2)')    '>>>>> RGN ended with termination code: ', info%termFlag
+         WRITE(99,'(a,i8)')    '      number of function calls:    ', info%nEval
+         WRITE(99,'(a,f10.3)') '      cpu time (sec):               ', info%cpuTime
          CLOSE (unit=99)
       END IF
-   ! Deallocate memory
-      DEALLOCATE (h, r, rBest, rl, rh, xl, xh, xBest, Ja, g, He, as, xScale, &
-                  xp, xt, delX, xls, hLo, hHi, xOldbest, fOptSeries, delXAct)        
       RETURN
    !
    ! Error states
@@ -544,7 +517,7 @@ SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, mi
    REAL(rk) :: wMin
    !----
    ! Check consistency of dimension
-      error = 0; message = 'ok'
+!      error = 0; message = 'ok'
       
       IF (SIZE(A,1) /= m) THEN; error = 1; message = 'm not same as assumed size in A(m,n)' ; RETURN; END IF
       IF (SIZE(A,2) /= n) THEN; error = 1; message = 'n not same as assumed size in A(m,n)' ; RETURN; END IF
@@ -563,7 +536,7 @@ SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, mi
       IF (ALLOCATED(V)) DEALLOCATE(V);     ALLOCATE (V(n,n))
       IF (ALLOCATED(tmp)) DEALLOCATE(tmp); ALLOCATE (tmp(n))
    ! Singular value decomposition
-      CALL svdDecomp (a=A, u=U, s=SD, v=V, nite=nite, error=error, message=message)
+      CALL svdDecomp (a=A, u=U, s=SD, v=V, nite=nite)
       IF (error /= 0) GO TO 11
    ! Dealing with U and V, in the oppesite direction
       U=-U; V=-V   
@@ -613,29 +586,12 @@ SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, mi
 END SUBROUTINE svdSolve
 !
 !
-  SUBROUTINE svdDecomp(a, u, s, v, nite, error, message)
+  SUBROUTINE svdDecomp(a, u, s, v, nite)
     ! Singular value decomposition
-    ! The SVD decomposition is used the fortran code from github: https://github.com/tukiains/dimred-fortran
-    ! With the following MIT license
-    ! MIT License
-    !
-    !Copyright (c) 2016 Simo Tukiainen
-    !
-    !Permission is hereby granted, free of charge, to any person obtaining a copy
-    !of this software and associated documentation files (the "Software"), to deal
-    !in the Software without restriction, including without limitation the rights
-    !to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    !copies of the Software, and to permit persons to whom the Software is
-    !furnished to do so, subject to the following conditions:
-    !
-    !The above copyright notice and this permission notice shall be included in all
-    !copies or substantial portions of the Software.
     IMPLICIT NONE
     REAL(rk), DIMENSION(:,:), INTENT(IN) :: a
     REAL(rk), DIMENSION(SIZE(a,1), SIZE(a,2)), INTENT(OUT) :: u
     REAL(rk), DIMENSION(SIZE(a,2), SIZE(a,2)), INTENT(OUT) :: s, v
-    INTEGER(ik), INTENT(out) :: error
-    CHARACTER(*),INTENT(out) :: message
     INTEGER(ik),INTENT(OUT) :: nite
     REAL(rk), DIMENSION(SIZE(a,1), SIZE(a,2)) :: q1
     REAL(rk), DIMENSION(SIZE(a,1), SIZE(a,1)) :: u1
@@ -747,7 +703,7 @@ SUBROUTINE svdBackSub (m, n, U, W, V, b, x, error, message)
    REAL(rk), ALLOCATABLE :: tmp(:)
    !----
    ! Check consistency of dimension
-      error = 0; message = 'ok'
+!      error = 0; message = 'ok'
 
       IF (SIZE(U,1) /= m) THEN; message = 'm not same as assumed size in U(m,n)' ; GO TO 111; END IF
       IF (SIZE(U,2) /= n) THEN; message = 'n not same as assumed size in U(m,n)' ; GO TO 111; END IF

@@ -1,9 +1,17 @@
 PROGRAM testRGN
+! Purpose: Calibrate 2D Rosenbrock function with Robust Gauss-Newton Algorithm (RGN)
+!
+! This is the example for calibrating Rosenbrock function with RGN
+! The core of RGN is recorded in rgn.f90
+! The data exchange between RGN and Rosenbrock function is through "objFunc"
+! and the sum of least squares objective function value is evaluated and returned to RGN subroutine.
+! The public variables were shared through subroutine "constantsMod.f90"
+!******************************************************************
    USE rgnMod
    USE constantsMod
    IMPLICIT NONE
    INTEGER(ik), PARAMETER :: p=2, n=2
-   REAL(rk) :: xo(p), xLo(p), xHi(p), x(p)
+   REAL(rk) :: x0(p), xLo(p), xHi(p), x(p)
    TYPE (rgnConvType) :: cnv
    INTEGER(ik) :: error
    CHARACTER(100) :: message
@@ -11,15 +19,19 @@ PROGRAM testRGN
    EXTERNAL objFunc
    !----
    !
-   xo = [-1.0_rk, 0.0_rk]                                ! Start point of the search, with the optimum at [1.0 1.0]
+   x0 = [-1.0_rk, 0.0_rk]                                ! Start point of the search, with the optimum at [1.0 1.0]
    xLo = [-1.5_rk, -1.0_rk]                             ! Low bound
    xhi = [ 1.5_rk,  3.0_rk]                             ! Upper bound
    CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=1, fail=0)
-   CALL rgn (objFunc=objFunc, p=2, n=4, xo=xo, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
+   CALL rgn (objFunc=objFunc, p=2, n=4, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
+   IF(error /= 0)then
+     WRITE(*,*) message
+     PAUSE
+   END IF
    WRITE(*,*) x
    WRITE(*,*) info%f
    WRITE(*,*) info%nIter, info%termFlag
-   PAUSE
+   WRITE(*,*) info%cpuTime
 END PROGRAM testRGN
 
 SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)

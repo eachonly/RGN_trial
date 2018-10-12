@@ -27,7 +27,7 @@
 		<Filter Name="Header Files" Filter="fi;fd"/>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		<File RelativePath=".\BassRiver.dat"/>
-		<File RelativePath=".\fitModel.txt"/>
+		<File RelativePath=".\inputData.txt"/>
 		<File RelativePath=".\states.txt"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<File RelativePath="..\RGNcode\constantsMod.f90"/>

@@ -40,7 +40,6 @@ MODULE HyMod_Mod
    CHARACTER(*),PARAMETER::procnam="evolveHYMOD"
    REAL(mrk)::Uo,Uq,Us,Ue
    ! Start procedure here
-    err=0; message=procnam//"/ok"
     CALL checkFeasHYMOD(S,Smax,err,message)
     IF(err/=0)THEN
         err=10; message="f-"//procnam//"/&"//message; RETURN
@@ -182,7 +181,6 @@ MODULE HyMod_Mod
     CHARACTER(*),PARAMETER::fmt1='(a,es15.8,a,es15.8,a)'
     CHARACTER(*),PARAMETER::fmt2='(a,i0,a,es15.8,a)'
     ! Start procedure here
-    err=0
     IF(S(isoil)>Smax)THEN
       WRITE(message,fmt1)"f-"//procnam//"/badIni&
         &[S(soil)>Smax;(",S(isoil),")>(",Smax,")]"

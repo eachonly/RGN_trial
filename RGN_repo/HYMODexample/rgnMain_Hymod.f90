@@ -1,34 +1,49 @@
 PROGRAM testRGN
+! Purpose: Calibrate HYMOD parameters with Robust Gauss-Newton Algorithm (RGN)
+!
+! This is the example for calibrating HYMOD with RGN
+! The core of RGN is recorded in rgn.f90; the core of HYMOD is recoded in hymod.f90
+! The data exchange between RGN and HYMOD is through "objFunc", where the HYMOD is called,
+! and the sum of least squares objective function value is evaluated and returned to RGN subroutine.
+! The public variables were shared through subroutine "constantsMod.f90"
+
+! Firstly the information about parameters are loaded, such as parameter name, initial value, lower and upper limit;
+! Then the input data was loaded, which include the rainfall, ET, and runoff
+! Finally, the initial states for storage are loaded.
+!******************************************************************
    USE rgnMod
    USE constantsMod, ONLY: ik, rk
    USE hydroDataMod, ONLY: nWarmUp, nData, nPar, nState, rain, pet, obsQ, parName, stateName, stateVal
    IMPLICIT NONE
+!  Constants
+   CHARACTER(*),PARAMETER::procnam="testMain"
 !   INTEGER(ik):: nWarmup,nData, nPar,nState
    INTEGER(ik)::i, status
-   REAL(rk),ALLOCATABLE :: xo(:), xLo(:), xHi(:), x(:)
+   REAL(rk),ALLOCATABLE :: x0(:), xLo(:), xHi(:), x(:)
 !   REAL(rk),ALLOCATABLE::rain(:),pet(:),obsQ(:)
    TYPE (rgnConvType) :: cnv
    INTEGER(ik) :: error
-   CHARACTER(100) :: message
+   CHARACTER(256) :: message
 !   CHARACTER(128),ALLOCATABLE::parName(:)
    CHARACTER(256)::dataFileName
    TYPE (rgnInfoType) :: info
    EXTERNAL objFunc
    !----
    error=0
-   !Get the basic information of the model with file 'fitModel.txt',
+   !Part 1: load files for HYMOD
+   !Get the basic information of the model with file 'inputData.txt',
    !which includes the parameter infromation and initial status of states
-   OPEN (UNIT=1,FILE='fitModel.txt',STATUS='old',ACTION='READ',IOSTAT=status)
+   OPEN (UNIT=1,FILE='inputData.txt',STATUS='old',ACTION='READ',IOSTAT=status)
    IF (status /= 0)THEN
-       WRITE(*,*) "An error in opening the file fitModel.txt"
+       WRITE(*,*) "Error in opening inputData.txt"
        PAUSE;STOP
    END IF    
    READ(1,*) npar    !number of parameters 
    
    !Allocate the public data
-   ALLOCATE(xLo(nPar),xHi(nPar),xo(npar),x(nPar),STAT=status)
+   ALLOCATE(xLo(nPar),xHi(nPar),x0(npar),x(nPar),STAT=status)
    IF (status /= 0) THEN
-       WRITE(*,*) "There are errors in allocating lowPar,highPar, and parameter" 
+       WRITE(*,*) "Error in allocating lowPar, highPar, and x0" 
        PAUSE;STOP
    END IF
    !Initialize the parameters
@@ -36,12 +51,12 @@ PROGRAM testRGN
    !Allocate the Parameter-related array. like the name,Lowpar,highPar
    ALLOCATE(parName(nPar),STAT=status)
    IF (status /= 0) THEN
-       WRITE(*,*) "There are errors in allocating name"
+       WRITE(*,*) "Error in allocating name"
        PAUSE;STOP
    END IF
    !Read the parameters Line by Line
    DO i=1,npar
-       READ(1,*) parName(i),xLo(i),xHi(i),xo(i)
+       READ(1,*) parName(i),xLo(i),xHi(i),x0(i)
    END DO
    !Continue reading the File, the dataFileName is the name of the input file, includes rainfall, runoff, evaporation
    READ(1,*) dataFileName  
@@ -52,15 +67,15 @@ PROGRAM testRGN
    !Get the basic information of the model states with file 'states.txt',
    OPEN (UNIT=1,FILE='states.txt',STATUS='old',ACTION='READ',IOSTAT=status)
    IF (status /= 0)THEN
-       WRITE(*,*) "An error in opening the file states.txt"
+       WRITE(*,*) "Error in opening states.txt"
        PAUSE;STOP
    END IF
    READ(1,*) nState    !number of parameters 
          
-   !Allocate the Parameter-related array. like the name
+   !Allocate the Parameter-related array, such as name
    ALLOCATE(stateName(nState),stateVal(nState),STAT=status)
    IF (status /= 0) THEN
-       WRITE(*,*) "There are errors in allocating stateName"
+       WRITE(*,*) "Error in allocating stateName"
        PAUSE;STOP
    END IF
    !Read the parameters Line by Line
@@ -86,7 +101,7 @@ PROGRAM testRGN
 !Allocate the array to store the Data
    ALLOCATE(rain(nData),pet(nData),obsQ(nData),STAT=status)
    IF (status /= 0) THEN
-       WRITE(*,*) "There are errors in allocating observation file"
+       WRITE(*,*) "Error in allocating rainfall-runoff observations"
        PAUSE;STOP
    END IF
 !Read the contents in the File
@@ -95,17 +110,23 @@ PROGRAM testRGN
        READ(1,*) rain(i),pet(i),obsQ(i)
    END DO    
   CLOSE(UNIT=1)
+  
+!Part 2: Run RGN
 !Initialize the RGN default settings
-  CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=1, fail=0)
+  CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10, fail=0)
 !Call RGN optimization algorithms
-  CALL rgn (objFunc=objFunc, p=nPar, n=nData-nWarmUp+1, xo=xo, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
+  CALL rgn (objFunc=objFunc, p=nPar, n=nData-nWarmUp+1, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
+  IF(error /= 0)then
+    WRITE(*,*) message
+    PAUSE
+  END IF
   WRITE(*,*) x
   WRITE(*,*) info%f
   WRITE(*,*) info%nIter, info%termFlag
-  DEALLOCATE(xLo,xHi,xo,x)
+  WRITE(*,*) info%cpuTime
+  DEALLOCATE(xLo,xHi,x0,x)
   DEALLOCATE(parName,stateName,stateVal)
   DEALLOCATE(rain,pet,obsQ)
-  PAUSE
 END PROGRAM testRGN
 
 SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
@@ -145,7 +166,8 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
    
    ! check feas of state wrt pars unless flexi-state
    IF(S(1)>Smax.and..not.flexS)THEN
-        message="f-"//procnam//"/SinfeasP(Soil moisture exceeds Smax)" ;RETURN
+        message="f-"//procnam//"/Soil moisture exceeds"
+        error=-10;RETURN
    ENDIF
    ! * Allows convenient initialisation and adjustment of states
    if(flexS)then
@@ -158,6 +180,9 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
        CALL HyMod(precip=rain(i), pet=pet(i), S=S,    &
        Smax=Smax, b=b, alpha=alpha, Ks=Ks, Kq=Kq,   &
        Qs=Qs, Qq=Qq, Q=Q, err=error, message=message)
+       IF (error /=0) THEN
+           message="f-"//procnam//"/&"//message; RETURN
+       END IF
        WRITE(1,*)  Q
    END DO
 !
@@ -168,6 +193,9 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
        Smax=Smax, b=b, alpha=alpha, Ks=Ks, Kq=Kq,   &
        Qs=Qs, Qq=Qq, Q=Q, err=error, message=message)
        WRITE(1,*)  Q
+       IF (error /=0) THEN
+           message="f-"//procnam//"/&"//message; RETURN
+       END IF       
        r(i-nWarmUp+1)=obsQ(i)-Q
        f=f+r(i-nWarmUp+1)**2
    END DO  
