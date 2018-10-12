@@ -129,7 +129,7 @@ PROGRAM testRGN
   DEALLOCATE(rain,pet,obsQ)
 END PROGRAM testRGN
 
-SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
+SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    USE constantsMod, ONLY: ik, rk
    USE Hymod_Mod
    USE hydroDataMod, ONLY: nWarmUp,rain,pet,obsQ,stateVal
@@ -139,10 +139,13 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
    REAL(rk), INTENT(in)    :: x(:)                  ! Parameters
    REAL(rk), INTENT(out)   :: r(:)                  ! Residuals
    REAL(rk), INTENT(out)   :: f                     ! Objective function value = Sum of squared residuals
+   REAL(rk),INTENT(out)    :: timeFunc              ! Time for evaluate the objective function
    INTEGER(ik), INTENT(out)    :: error
    CHARACTER(100),INTENT(out) :: message
    INTEGER(ik) :: i
 
+   !time for evaluating
+   REAL(rk)::timeObj(2)
    !Hymod Parameters and states
    REAL(rk):: S(5)                      ! soil moister states
    REAL(rk):: Smax,b,alpha,Ks,Kq        ! parameters
@@ -152,6 +155,7 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
    CHARACTER(*),PARAMETER::procnam="ObjFunc"
    !---
    !
+   CALL CPU_TIME (timeObj(1))
    flexS=.true.         ! Allow fix of Smax
    !Assign parametes
    Smax=x(1)            ! Maximum storage capacity
@@ -202,4 +206,6 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
   f = f/2.0_rk
   WRITE(1,*) f
   CLOSE(UNIT=1)
+  CALL CPU_TIME (timeObj(2))
+  timeFunc=timeObj(2)-timeObj(1)
 END SUBROUTINE objFunc

@@ -34,7 +34,7 @@ PROGRAM testRGN
    WRITE(*,*) info%cpuTime
 END PROGRAM testRGN
 
-SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
+SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    USE constantsMod, ONLY: ik, rk
    IMPLICIT NONE
    INTEGER(ik), INTENT(in) :: nPar
@@ -42,14 +42,20 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
    REAL(rk), INTENT(in) :: x(:)
    REAL(rk), INTENT(out) :: r(:)
    REAL(rk), INTENT(out):: f
+   REAL(rk),INTENT(out):: timeFunc
    INTEGER(ik), INTENT(out):: error
    CHARACTER(100),INTENT(out) :: message
    INTEGER(ik) :: i
    !---
    !
+   !time for evaluating
+   REAL(rk)::timeObj(2)
+   CALL CPU_TIME (timeObj(1))
    f = 0.0_rk
    r(1) = 1-x(1)
    r(2)=10.0_rk*(x(2)-x(1)**2)                      ! Compute residual
    f = f + r(1)**2+r(2)**2                          ! Calculate objective function
    f = f/2.0_rk
+   CALL CPU_TIME (timeObj(2))
+   timeFunc=timeObj(2)-timeObj(1)
 END SUBROUTINE objFunc

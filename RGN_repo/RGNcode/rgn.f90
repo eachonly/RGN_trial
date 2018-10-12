@@ -53,7 +53,7 @@ MODULE rgnMod
    
    TYPE rgnInfoType
       INTEGER(ik) :: nIter, termFlag, nEval
-      REAL(rk) :: f, cpuTime
+      REAL(rk) :: f, cpuTime,objTime
    END TYPE rgnInfoType
    
    TYPE rgnSetType
@@ -137,7 +137,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
    CHARACTER(*),INTENT(out)           :: message  ! error message
    CHARACTER(*), INTENT(in), OPTIONAL :: decFile  ! dumpfile name
    INTERFACE
-      SUBROUTINE objFunc (nPar, nSim, x, r, f, error, message)
+      SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
          USE constantsMod, ONLY: ik, rk
          IMPLICIT NONE
          INTEGER(ik), INTENT(in) :: nPar
@@ -145,6 +145,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
          REAL(rk), INTENT(in) :: x(:)
          REAL(rk), INTENT(out) :: r(:)
          REAL(rk), INTENT(out):: f
+         REAL(rk),INTENT(out):: timeFunc   
          INTEGER(ik), INTENT(out):: error
          CHARACTER(100),INTENT(out) :: message
    INTEGER(ik)::status
@@ -164,9 +165,11 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
    INTEGER(ik):: status
    INTEGER(ik), PARAMETER :: BF=0, BL=1, BFL=2, BH=3, BFH=4,                       &
                              NUL_CON=-1, GRAD_CON=0, SEARCH_CON=1, FRED_CON=2
+   REAL(rk):: time4fcall,time4fcallAcc
    CHARACTER(20) :: dfm(4)
    !CHARACTER(100) :: mess
    !----
+   time4fcall=0.0_rk;time4fcallAcc=0.0_rk
    ! Allocate work arrays
       ALLOCATE (h(p), r(n), rBest(n), rl(n), rh(n), xl(p), xh(p), xBest(p), Ja(n,p), g(p), He(p,p), as(p), xScale(p), &
                 xp(p), xt(p), delX(p), xls(p), hLo(p), hHi(p), x0ldbest(p), fOptSeries(cnv%iterMax), delXAct(p),STAT=status)        
@@ -192,8 +195,9 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       info%termFlag = 0; info%nEval = 0
       CALL CPU_TIME (time(1))
       x = x0
-      CALL objFunc (nPar=p, nSim=n, x=x, r=rBest, f=f, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
-      fBest = f; xBest = x    
+      CALL objFunc (nPar=p, nSim=n, x=x, r=rBest, f=f, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
+      fBest = f; xBest = x
+      time4fcallAcc=time4fcallAcc+time4fcall  
       !CALL userRunTimeMessage ('Starting RGN', -1)
    !-------------
    ! RGN iteration loop
@@ -218,10 +222,12 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
          DO k = 1, p
             xh(k) = x(k) + h(k); xh(k) = MIN(xHi(k), xh(k))
             IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) 'Forward Jacoian sample point:   ', xh
-            CALL objFunc (nPar=p, nSim=n, x=xh, r=rh, f=fh, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1; CALL updateBest (fh, xh, rh)
+            CALL objFunc (nPar=p, nSim=n, x=xh, r=rh, f=fh, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1; CALL updateBest (fh, xh, rh)
             xl(k) = x(k) - h(k); xl(k) = MAX(xLo(k), xl(k))
+            time4fcallAcc=time4fcallAcc+time4fcall  
             IF (cnv%dumpResults >= 2) WRITE(99,dfm(1)) 'Backward Jacobian sample Point: ', xl
-            CALL objFunc (nPar=p, nSim=n, x=xl, r=rl, f=fl, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1; CALL updateBest (fl, xl, rl)
+            CALL objFunc (nPar=p, nSim=n, x=xl, r=rl, f=fl, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1; CALL updateBest (fl, xl, rl)
+            time4fcallAcc=time4fcallAcc+time4fcall  
             Ja(:,k) = (rh-rl)/(xh(k)-xl(k))
             xh(k) = x(k); xl(k) = x(k)
             IF (cnv%dumpResults >= 2) WRITE(99,'(a,i3,2g15.7)') 'Jacobian matrix column:          ', k, fh, fl
@@ -381,7 +387,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
          flag_ls = NO
          DO i = 0, set%nls
             xt = x + sig*delX
-            CALL objFunc (nPar=p, nSim=n, x=xt, r=rl, f=ft, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
+            CALL objFunc (nPar=p, nSim=n, x=xt, r=rl, f=ft, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
+            time4fcallAcc=time4fcallAcc+time4fcall
             IF (cnv%dumpResults >= 3) THEN
                 WRITE(99,dfm(1))           'xt=                             ', xt
                 WRITE(99,'(a,g15.7)')      'ft=                             ', ft
@@ -457,7 +464,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       END DO iterLoop
    !
    ! Save optional information
-      CALL CPU_TIME (time(2)); info%cpuTime = time(2) - time(1)
+      CALL CPU_TIME (time(2)); info%cpuTime = time(2) - time(1);info%objTime=time4fcallAcc
       info%nIter = nIter; info%f = f
       WRITE(message,'(a,i2,a,g15.6)') 'RGN ended with termination code: ', info%termFlag, ' f=', info%f
       IF (cnv%dumpResults >= 1) THEN
