@@ -28,8 +28,11 @@ PROGRAM testRGN
    CHARACTER(256)::dataFileName
    TYPE (rgnInfoType) :: info
    EXTERNAL objFunc
+   CHARACTER(20) :: dfm1
+   !Write out the message what is running
+   WRITE(*,*) "Calibrating Hymod with RGN, approximate running time 10-40 seconds"
    !----
-   error=0
+   error=0              ! Initialize error flag
    !Part 1: load files for HYMOD
    !Get the basic information of the model with file 'inputData.txt',
    !which includes the parameter infromation and initial status of states
@@ -110,20 +113,25 @@ PROGRAM testRGN
        READ(1,*) rain(i),pet(i),obsQ(i)
    END DO    
   CLOSE(UNIT=1)
-  
+!Give the format
+WRITE(dfm1,'(a,i4,a)')     '(a,', nPar,'g15.7)'
 !Part 2: Run RGN
 !Initialize the RGN default settings
   CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10, fail=0)
 !Call RGN optimization algorithms
+! key input parameters: p is the number of parameters to be optimized
+!                       n is the number of residuals
   CALL rgn (objFunc=objFunc, p=nPar, n=nData-nWarmUp+1, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
   IF(error /= 0)then
     WRITE(*,*) message
     PAUSE
   END IF
-  WRITE(*,*) x
-  WRITE(*,*) info%f
-  WRITE(*,*) info%nIter, info%termFlag
-  WRITE(*,*) info%cpuTime
+  WRITE(*,dfm1)                "Best parameter set      ", x
+  WRITE(*,'(a,g15.7)')         "Best objfunc value      ", info%f
+  WRITE(*,'(a,2x,i4)')         "Number of function calls", info%nEval
+  WRITE(*,'(a,2x,i4)')         "Total itration          ", info%nIter
+  WRITE(*,'(a,2x,i4)')         "Termination flag        ", info%termFlag
+  WRITE(*,'(a,g15.7)')         "CPU time                ",info%cpuTime
   DEALLOCATE(xLo,xHi,x0,x)
   DEALLOCATE(parName,stateName,stateVal)
   DEALLOCATE(rain,pet,obsQ)
@@ -140,8 +148,8 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    REAL(rk), INTENT(out)   :: r(:)                  ! Residuals
    REAL(rk), INTENT(out)   :: f                     ! Objective function value = Sum of squared residuals
    REAL(rk),INTENT(out)    :: timeFunc              ! Time for evaluate the objective function
-   INTEGER(ik), INTENT(out)    :: error
-   CHARACTER(100),INTENT(out) :: message
+   INTEGER(ik), INTENT(inout)    :: error
+   CHARACTER(*),INTENT(inout) :: message
    INTEGER(ik) :: i
 
    !time for evaluating

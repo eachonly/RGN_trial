@@ -34,20 +34,20 @@ MODULE HyMod_Mod
    REAL(mrk),INTENT(in):: precip, pet           ! forcings
    REAL(mrk),INTENT(in)::Smax,b,alpha,Ks,Kq     ! parameters
    REAL(mrk),INTENT(out)::Qs,Qq,Q               ! responses
-   INTEGER(mik),INTENT(out)::err
-   CHARACTER(*),INTENT(out)::message
+   INTEGER(mik),INTENT(inout)::err
+   CHARACTER(*),INTENT(inout)::message
    !local parameters
    CHARACTER(*),PARAMETER::procnam="evolveHYMOD"
    REAL(mrk)::Uo,Uq,Us,Ue
    ! Start procedure here
     CALL checkFeasHYMOD(S,Smax,err,message)
     IF(err/=0)THEN
-        err=10; message="f-"//procnam//"/&"//message; RETURN
+       message="f-"//procnam//"/&"//message; RETURN
     ENDIF
    !The first part is to calculate the sum of direct flow and saturated flow,U0
    CALL PDM(S(isoil),Smax,b,precip,Uo,err,message)
    IF(err/=0)THEN
-       err=10; message="f-"//procnam//"/&"//message; RETURN
+      message="f-"//procnam//"/&"//message; RETURN
    ENDIF
    Ue=pet                                       !     - ET at max (eg, Wagener HESS)
    Ue=min(Ue,S(isoil))
@@ -86,8 +86,8 @@ MODULE HyMod_Mod
    REAL(mrk),INTENT(inout)::S
    REAL(mrk),INTENT(in)::Smax,b,P
    REAL(mrk),INTENT(out)::Q
-   INTEGER(mik),INTENT(out)::err
-   CHARACTER(*),INTENT(out)::message
+   INTEGER(mik),INTENT(inout)::err
+   CHARACTER(*),INTENT(inout)::message
    ! locals
    REAL(mrk),PARAMETER::Smin=zero,tolMBE=1.e-14_mrk
    REAL(mrk)::Sbeg,frac,OV1,OV2,Pinf,eMB,net
@@ -174,8 +174,8 @@ MODULE HyMod_Mod
     IMPLICIT NONE
     ! dummies
     REAL(mrk),INTENT(in)::S(:),Smax
-    INTEGER(mik),INTENT(out)::err
-    CHARACTER(*),INTENT(out)::message
+    INTEGER(mik),INTENT(inout)::err
+    CHARACTER(*),INTENT(inout)::message
     ! locals
     CHARACTER(*),PARAMETER::procnam="checkFeasHYMOD"
     CHARACTER(*),PARAMETER::fmt1='(a,es15.8,a,es15.8,a)'
@@ -184,10 +184,10 @@ MODULE HyMod_Mod
     IF(S(isoil)>Smax)THEN
       WRITE(message,fmt1)"f-"//procnam//"/badIni&
         &[S(soil)>Smax;(",S(isoil),")>(",Smax,")]"
-      err=10; RETURN
+      err=-10; RETURN
     ELSEIF(ANY(S<zero))THEN
       WRITE(message,fmt2)"f-"//procnam//"/badIni[S)<0.0]"
-      err=20; RETURN
+      err=-10; RETURN
     ENDIF
     ! End procedure here
     ENDSUBROUTINE checkFeasHYMOD

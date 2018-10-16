@@ -14,24 +14,35 @@ PROGRAM testRGN
    REAL(rk) :: x0(p), xLo(p), xHi(p), x(p)
    TYPE (rgnConvType) :: cnv
    INTEGER(ik) :: error
-   CHARACTER(100) :: message
+   CHARACTER(256) :: message
    TYPE (rgnInfoType) :: info
    EXTERNAL objFunc
+   CHARACTER(20) :: dfm1
    !----
+   !Write out the message what is running
+   WRITE(*,*) " Calibrating Rosenbrock with RGN, approximate running time 1-2 seconds"
    !
-   x0 = [-1.0_rk, 0.0_rk]                                ! Start point of the search, with the optimum at [1.0 1.0]
+   error=0                                              ! Initialize error flag
+   x0 = [-1.0_rk, 0.0_rk]                               ! Start point of the search, with the optimum at [1.0 1.0]
    xLo = [-1.5_rk, -1.0_rk]                             ! Low bound
    xhi = [ 1.5_rk,  3.0_rk]                             ! Upper bound
-   CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=1, fail=0)
-   CALL rgn (objFunc=objFunc, p=2, n=4, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
+   !Give the format
+   WRITE(dfm1,'(a,i4,a)')     '(a,', 2,'g15.7)'
+   CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10, fail=0)
+   !
+   ! key input parameters: p is the number of parameters to be optimized
+   !                       n is the number of residuals
+   CALL rgn (objFunc=objFunc, p=2, n=2, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
    IF(error /= 0)then
      WRITE(*,*) message
      PAUSE
    END IF
-   WRITE(*,*) x
-   WRITE(*,*) info%f
-   WRITE(*,*) info%nIter, info%termFlag
-   WRITE(*,*) info%cpuTime
+   WRITE(*,dfm1)                "Best parameter set      ", x
+   WRITE(*,'(a,g15.7)')         "Best objfunc value      ", info%f
+   WRITE(*,'(a,2x,i4)')         "Number of function calls", info%nEval
+   WRITE(*,'(a,2x,i4)')         "Total itration          ", info%nIter
+   WRITE(*,'(a,2x,i4)')         "Termination flag        ", info%termFlag
+   WRITE(*,'(a,g15.7)')         "CPU time                ",info%cpuTime
 END PROGRAM testRGN
 
 SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
@@ -43,8 +54,8 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    REAL(rk), INTENT(out) :: r(:)
    REAL(rk), INTENT(out):: f
    REAL(rk),INTENT(out):: timeFunc
-   INTEGER(ik), INTENT(out):: error
-   CHARACTER(100),INTENT(out) :: message
+   INTEGER(ik), INTENT(inout):: error
+   CHARACTER(*),INTENT(inout) :: message
    INTEGER(ik) :: i
    !---
    !

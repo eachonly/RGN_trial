@@ -133,8 +133,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
    TYPE (rgnConvType), INTENT(in)     :: cnv      ! Convergence data structure
    TYPE (rgnInfoType), INTENT(out)    :: info     ! Run information data structure
    REAL(rk), INTENT(out)              :: x(:)     ! Final parameters
-   INTEGER(ik), INTENT(out)           :: error    ! error code 0= ok
-   CHARACTER(*),INTENT(out)           :: message  ! error message
+   INTEGER(ik), INTENT(inout)         :: error    ! error code 0= ok
+   CHARACTER(*),INTENT(inout)         :: message  ! error message
    CHARACTER(*), INTENT(in), OPTIONAL :: decFile  ! dumpfile name
    INTERFACE
       SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
@@ -146,8 +146,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
          REAL(rk), INTENT(out) :: r(:)
          REAL(rk), INTENT(out):: f
          REAL(rk),INTENT(out):: timeFunc   
-         INTEGER(ik), INTENT(out):: error
-         CHARACTER(100),INTENT(out) :: message
+         INTEGER(ik), INTENT(inout):: error
+         CHARACTER(100),INTENT(inout) :: message
    INTEGER(ik)::status
       END SUBROUTINE objFunc
    END INTERFACE
@@ -165,6 +165,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
    INTEGER(ik):: status
    INTEGER(ik), PARAMETER :: BF=0, BL=1, BFL=2, BH=3, BFH=4,                       &
                              NUL_CON=-1, GRAD_CON=0, SEARCH_CON=1, FRED_CON=2
+                                !local parameters
+   CHARACTER(*),PARAMETER::procnam="rgnMain"
    REAL(rk):: time4fcall,time4fcallAcc
    CHARACTER(20) :: dfm(4)
    !CHARACTER(100) :: mess
@@ -345,6 +347,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
          END DO
          minSingFrac = set%alpha*SQRT(EPS)
          CALL svdSolve (m=nr, n=nr, A=HeRdc, b=-gRdc, x=delXRdc, TS=tsv, error=error, message=message, minSingFrac=minSingFrac)
+         IF (error /=0) GO TO 1
          j = 0
          DO k = 1, p
             IF (as(k) == BF) THEN
@@ -476,7 +479,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       RETURN
    !
    ! Error states
-1    error = 1; message = 'RGN objFunc call failed'
+1    error = 1; message = "f-"//procnam//"RGN objFunc call failed"
 CONTAINS
 
 SUBROUTINE updateBest (f, x, r)
@@ -514,8 +517,8 @@ SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, mi
    REAL(rk), INTENT(out), OPTIONAL :: Ainv(:,:)
    REAL(rk), INTENT(out), OPTIONAL :: S(:)
    REAL(rk), INTENT(out), OPTIONAL :: tS(:)
-   INTEGER(ik), INTENT(out) :: error
-   CHARACTER(*),INTENT(out) :: message
+   INTEGER(ik), INTENT(inout) :: error
+   CHARACTER(*),INTENT(inout) :: message
    REAL(rk), INTENT(in), OPTIONAL :: minSingFrac
    REAL(rk), INTENT(out), OPTIONAL :: minSingVal
    REAL(rk), INTENT(out), OPTIONAL ::  cn
@@ -704,8 +707,8 @@ SUBROUTINE svdBackSub (m, n, U, W, V, b, x, error, message)
    INTEGER(ik), INTENT(in) :: m, n
    REAL(rk), INTENT(in) :: U(:,:), W(:), V(:,:), b(:)
    REAL(rk), INTENT(out) :: x(:)
-   INTEGER(ik), INTENT(out) :: error
-   CHARACTER(*),INTENT(out) :: message
+   INTEGER(ik), INTENT(inout) :: error
+   CHARACTER(*),INTENT(inout) :: message
    INTEGER(ik) :: j
    REAL(rk), ALLOCATABLE :: tmp(:)
    !----
