@@ -30,9 +30,11 @@ PROGRAM testRGN
    EXTERNAL objFunc
    CHARACTER(20) :: dfm1
    !Write out the message what is running
-   WRITE(*,*) "Calibrating Hymod with RGN, approximate running time 10-40 seconds"
+   WRITE(*,'(a)') "Calibrating Hymod with RGN, approximate running time 10-40 seconds"
+   WRITE(*,*)
    !----
-   error=0              ! Initialize error flag
+!   error=0                                              ! Initialize error flag
+!   message=""                                           ! Initialize message
    !Part 1: load files for HYMOD
    !Get the basic information of the model with file 'inputData.txt',
    !which includes the parameter infromation and initial status of states

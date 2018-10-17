@@ -20,9 +20,11 @@ PROGRAM testRGN
    CHARACTER(20) :: dfm1
    !----
    !Write out the message what is running
-   WRITE(*,*) " Calibrating Rosenbrock with RGN, approximate running time 1-2 seconds"
+   WRITE(*,'(a)') " Calibrating Rosenbrock with RGN, approximate running time 1-2 seconds"
+   WRITE(*,*)
    !
-   error=0                                              ! Initialize error flag
+!   error=0                                              ! Initialize error flag
+!   message=""                                           ! Initialize message
    x0 = [-1.0_rk, 0.0_rk]                               ! Start point of the search, with the optimum at [1.0 1.0]
    xLo = [-1.5_rk, -1.0_rk]                             ! Low bound
    xhi = [ 1.5_rk,  3.0_rk]                             ! Upper bound

@@ -171,6 +171,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
    CHARACTER(20) :: dfm(4)
    !CHARACTER(100) :: mess
    !----
+   error=0                              ! Initialize error flag
+   message=""                           ! Initialize message
    time4fcall=0.0_rk;time4fcallAcc=0.0_rk
    ! Allocate work arrays
       ALLOCATE (h(p), r(n), rBest(n), rl(n), rh(n), xl(p), xh(p), xBest(p), Ja(n,p), g(p), He(p,p), as(p), xScale(p), &
