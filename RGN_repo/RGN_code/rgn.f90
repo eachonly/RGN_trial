@@ -5,6 +5,7 @@
 ! Programmer: George Kuczera, Youwei Qin, Dmitri Kavetski
 ! Created: 21 May 2016 at Newcastle, Australia
 ! Last modified: 15 July 2018 at Nanjing, China
+! Copyright, George Kuczera, Youwei Qin, Dmitri Kavetski, 2018-2023. All rights reserved.
 !
 ! References
 ! * Qin2018a: Youwei Qin, Kavetski Dmitri, George Kuczera (2018),
@@ -33,7 +34,7 @@
 !   message:    Error message
 ! ---
 ! Notes
-!   This module follow farily closely to the pseduocode in Qin2018a,
+!   This module follows fairly closely to the pseudocode in Qin2018a,
 !   Any issues or bugs, please contact the first author(Email:youwei.qin@uon.edu.au)
 
 MODULE rgnMod
@@ -379,7 +380,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
             END IF
          END DO
    !
-   ! Calculate the expected function reduction with constrainted delXRdc
+   ! Calculate the expected function reduction with constrained delXRdc
          gradDf = DOT_PRODUCT(gRdc,delXRdc)
          hessDf = DOT_PRODUCT(delXRdc,MATMUL(HeRdc,delXRdc)) 
          fredExp = gradDf + 0.5_rk*hessDf
@@ -511,7 +512,7 @@ END SUBROUTINE rgn
 !
 !
 SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, minSingVal, cn)
-   ! Solves Ax=b using SVD decomposition followed  setting singular values to zero and then back substitution
+   ! Solves Ax=b using SVD decomposition followed setting singular values to zero and then back substitution
    INTEGER(ik), INTENT(in) :: m, n
    REAL(rk), INTENT(in) :: A(:,:)
    REAL(rk), INTENT(in), OPTIONAL :: b(:)
@@ -550,7 +551,7 @@ SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, mi
    ! Singular value decomposition
       CALL svdDecomp (a=A, u=U, s=SD, v=V, nite=nite)
       IF (error /= 0) GO TO 11
-   ! Dealing with U and V, in the oppesite direction
+   ! Dealing with U and V, in the opposite direction
       U=-U; V=-V   
       FORALL (n=1:SIZE(V,1)) W(n) = SD(n,n)
       IF (PRESENT(S)) S = W
@@ -567,7 +568,7 @@ SUBROUTINE svdSolve (m, n, A, b, x, Ainv, S, tS, error, message, minSingFrac, mi
       IF (PRESENT(tS)) tS = W
       IF (PRESENT(cn)) cn = MAXVAL(W)/MINVAL(W)
    !
-   ! Get x using backsubstitution
+   ! Get x using back substitution
       IF (PRESENT(b) .and. PRESENT(x)) THEN
          CALL svdBackSub (m=m, n=n, U=U, W=W, V=V, b=b, x=x, error=error, message=message)
       END IF

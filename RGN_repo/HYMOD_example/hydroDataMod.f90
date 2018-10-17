@@ -4,9 +4,10 @@
 
 ! Author: Youwei Qin
 ! Email: youwei.qin@uon.edu.au
-! Colledge of Hydrology and Water Resources
+! College of Hydrology and Water Resources
 ! Hohai University
 ! Nanjing, Jiangsu, 210098, China
+! Copyright, Youwei Qin, 2018-2023. All rights reserved.
 !
 MODULE hydroDataMod
    USE constantsMod, ONLY: ik, rk

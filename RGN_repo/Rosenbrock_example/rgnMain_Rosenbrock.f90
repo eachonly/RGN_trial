@@ -1,6 +1,11 @@
 PROGRAM testRGN
 ! Purpose: Calibrate 2D Rosenbrock function with Robust Gauss-Newton Algorithm (RGN)
-!
+! ---
+! Programmer: Youwei Qin, Dmitri Kavetski, Michael Leonard
+! Created: July 2018 AD, Hohai University, China.
+! Last modified: October 2018 AD, Hohai University, China
+! Copyright, Youwei Qin, Dmitri Kavetski, Michael Leonard, 2018-2023. All rights reserved.
+! ---
 ! This is the example for calibrating Rosenbrock function with RGN
 ! The core of RGN is recorded in rgn.f90
 ! The data exchange between RGN and Rosenbrock function is through "objFunc"
@@ -39,12 +44,12 @@ PROGRAM testRGN
      WRITE(*,*) message
      PAUSE
    END IF
-   WRITE(*,dfm1)                "Best parameter set      ", x
-   WRITE(*,'(a,g15.7)')         "Best objfunc value      ", info%f
-   WRITE(*,'(a,2x,i4)')         "Number of function calls", info%nEval
-   WRITE(*,'(a,2x,i4)')         "Total itration          ", info%nIter
-   WRITE(*,'(a,2x,i4)')         "Termination flag        ", info%termFlag
-   WRITE(*,'(a,g15.7)')         "CPU time                ",info%cpuTime
+   WRITE(*,dfm1)                "Best parameter set:     ", x
+   WRITE(*,'(a,g15.7)')         "Best objfunc value:     ", info%f
+   WRITE(*,'(a,4x,i0)')         "Number of objfunc calls:", info%nEval
+   WRITE(*,'(a,4x,i0)')         "Total iteration:         ", info%nIter
+   WRITE(*,'(a,4x,i0)')         "Termination flag:        ", info%termFlag
+   WRITE(*,'(a,g15.7)')         "CPU time:                ",info%cpuTime
 END PROGRAM testRGN
 
 SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)

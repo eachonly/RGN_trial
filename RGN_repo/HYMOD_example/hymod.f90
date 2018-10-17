@@ -3,8 +3,9 @@
 ! Purpose: Evolves a single step of the full HYMOD model.
 ! ---
 ! Programmer: Youwei Qin and Dmitri Kavetski
-! Kreated: Nov 2013 AD, Uni of Adelaide, Australia.
+! Created: Nov 2013 AD, Uni of Adelaide, Australia.
 ! Last modified: July 2018 AD, Hohai University, China
+! Copyright, Youwei Qin, Dmitri Kavetski, 2018-2023. All rights reserved.
 ! ---
 ! Performance
 !
@@ -123,7 +124,7 @@ MODULE HyMod_Mod
      err=-10; RETURN
    ENDIF
    net=P-Q
-   eMB=Sbeg+net-S                      ! S-balance discrapency
+   eMB=Sbeg+net-S                      ! S-balance discrEpency
    IF(ABS(eMB)>tolMBE*MAX(Smax,P,Q))THEN
      message="f-"//procnam//"/MBE[eMB>tol]"
      err=-10; RETURN

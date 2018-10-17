@@ -1,6 +1,11 @@
 PROGRAM testRGN
 ! Purpose: Calibrate HYMOD parameters with Robust Gauss-Newton Algorithm (RGN)
-!
+! ---
+! Programmer: Youwei Qin, Dmitri Kavetski, Michael Leonard
+! Created: July 2018 AD, Hohai University, China.
+! Last modified: October 2018 AD, Hohai University, China
+! Copyright, Youwei Qin, Dmitri Kavetski, Michael Leonard, 2018-2023. All rights reserved.
+! ---
 ! This is the example for calibrating HYMOD with RGN
 ! The core of RGN is recorded in rgn.f90; the core of HYMOD is recoded in hymod.f90
 ! The data exchange between RGN and HYMOD is through "objFunc", where the HYMOD is called,
@@ -37,7 +42,7 @@ PROGRAM testRGN
 !   message=""                                           ! Initialize message
    !Part 1: load files for HYMOD
    !Get the basic information of the model with file 'inputData.txt',
-   !which includes the parameter infromation and initial status of states
+   !which includes the parameter information and initial status of states
    OPEN (UNIT=1,FILE='inputData.txt',STATUS='old',ACTION='READ',IOSTAT=status)
    IF (status /= 0)THEN
        WRITE(*,*) "Error in opening inputData.txt"
@@ -128,12 +133,12 @@ WRITE(dfm1,'(a,i4,a)')     '(a,', nPar,'g15.7)'
     WRITE(*,*) message
     PAUSE
   END IF
-  WRITE(*,dfm1)                "Best parameter set      ", x
-  WRITE(*,'(a,g15.7)')         "Best objfunc value      ", info%f
-  WRITE(*,'(a,2x,i4)')         "Number of function calls", info%nEval
-  WRITE(*,'(a,2x,i4)')         "Total itration          ", info%nIter
-  WRITE(*,'(a,2x,i4)')         "Termination flag        ", info%termFlag
-  WRITE(*,'(a,g15.7)')         "CPU time                ",info%cpuTime
+   WRITE(*,dfm1)                "Best parameter set:     ", x
+   WRITE(*,'(a,g15.7)')         "Best objfunc value:     ", info%f
+   WRITE(*,'(a,4x,i0)')         "Number of objfunc calls:", info%nEval
+   WRITE(*,'(a,4x,i0)')         "Total iteration:         ", info%nIter
+   WRITE(*,'(a,4x,i0)')         "Termination flag:        ", info%termFlag
+   WRITE(*,'(a,g15.7)')         "CPU time:                ",info%cpuTime
   DEALLOCATE(xLo,xHi,x0,x)
   DEALLOCATE(parName,stateName,stateVal)
   DEALLOCATE(rain,pet,obsQ)
@@ -167,7 +172,7 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    !
    CALL CPU_TIME (timeObj(1))
    flexS=.true.         ! Allow fix of Smax
-   !Assign parametes
+   !Assign parameters
    Smax=x(1)            ! Maximum storage capacity
    b=x(2)               ! Degree of spatial variability of the soil moisture capacity
    alpha=x(3)           ! Factor distributing the flow between slow and quick release reservoirs
@@ -183,12 +188,12 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
         message="f-"//procnam//"/Soil moisture exceeds"
         error=-10;RETURN
    ENDIF
-   ! * Allows convenient initialisation and adjustment of states
+   ! * Allows convenient initialization and adjustment of states
    if(flexS)then
        if(S(1)>Smax)S(1)=Smax
    endif
     
-   !Warnup model so that memory of arbitary initial conditions is forgotten
+   !Warnup model so that memory of arbitrary initial conditions is forgotten
    OPEN (UNIT=1,FILE='dischagenew.txt') 
    DO i = 1, nWarmUp-1
        CALL HyMod(precip=rain(i), pet=pet(i), S=S,    &
@@ -200,7 +205,7 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
        WRITE(1,*)  Q
    END DO
 !
-! Compute R^2  for remiander of observed record
+! Compute R^2  for remainder of observed record
    f = 0.0_rk
    DO i = nWarmUp, nWarmUp+nSim-1
        CALL HyMod(precip=rain(i), pet=pet(i), S=S,    &
