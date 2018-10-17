@@ -218,7 +218,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
             WRITE(99,'(a,i5)')       'ObjFun Calls=                  ', info%nEval
             WRITE(99,'(a,g15.7)')    'ObjFun Value f=                 ', f
             WRITE(99,dfm(1))         'Parameter set=                  ', x
-            WRITE(99,dfm(4))         'Bound Index=                    ', MERGE(-1, MERGE(0, 1, x(1:p) <= xHi(1:p)), x(1:p) < xLo(1:p))
+            WRITE(99,dfm(4))         'Bound Index=                    ', MERGE(-1_ik, MERGE(0_ik, 1_ik, x(1:p) <= xHi(1:p)), x(1:p) < xLo(1:p))
             WRITE(99,dfm(1))         'Sampling Scale h=               ', h
          END IF
    !
@@ -294,7 +294,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
                termCode = FRED_CON
             END IF
             
-            nf = SUM(MERGE(1, 0, as == BF))
+            nf = SUM(MERGE(1_ik, 0_ik, as == BF))
             IF (nf == 0) THEN
                forceRelease = YES
             ELSE IF (termCode /= NUL_CON) THEN
@@ -305,8 +305,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
          END IF
    !
    ! Check conditions for releasing parameters
-         nrls = SUM(MERGE(1, 0, as == BFL .or. as == BFH))
-         nf = SUM(MERGE(1, 0, as == BF))
+         nrls = SUM(MERGE(1_ik, 0_ik, as == BFL .or. as == BFH))
+         nf = SUM(MERGE(1_ik, 0_ik, as == BF))
          IF (nrls > 0) THEN
             IF (nf > 0) THEN
                gMaxFree = MAXVAL(ABS(g)*MAX(ABS(x),xScale), mask = as == BF)
@@ -333,7 +333,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
    !
    ! Solve normal equations after removing non-free parameters
          IF (cnv%dumpResults >= 2) WRITE(99,dfm(4)) 'Active set=                     ', as
-         nr = SUM(MERGE(1, 0, as == BF))
+         nr = SUM(MERGE(1_ik, 0_ik, as == BF))
          ALLOCATE (HeRdc(nr,nr), delXRdc(nr), gRdc(nr), tsv(nr))
          j = 0
          DO k = 1, p
@@ -451,7 +451,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
               info%termFlag = 2; EXIT
             ENDIF
             
-			   noReduction = MERGE (noReduction+1, 0, f >= fOldBest)
+			   noReduction = MERGE (noReduction+1_ik, 0_ik, f >= fOldBest)
             IF (noReduction >= cnv%noReduction) THEN
                info%termFlag = 3; EXIT
             END IF
@@ -462,7 +462,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
                   maxRelPar = MAX (maxRelPar, ABS((x0ldBest(k)-x(k))/(x0ldBest(k)+cnv%tolsafe)))
                END IF
             END DO
-            noRelChangePar = MERGE (noRelChangePar+1, 0, maxRelPar >= 0.0_rk .and. maxRelPar < cnv%noRelChangeParTol)
+            noRelChangePar = MERGE (noRelChangePar+1_ik, 0_ik, maxRelPar >= 0.0_rk .and. maxRelPar < cnv%noRelChangeParTol)
             IF (noRelChangePar >= cnv%noRelChangePar) THEN
                info%termFlag = 4; EXIT
             END IF

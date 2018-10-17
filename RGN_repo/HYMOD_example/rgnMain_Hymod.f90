@@ -46,7 +46,7 @@ PROGRAM testRGN
    OPEN (UNIT=1,FILE='inputData.txt',STATUS='old',ACTION='READ',IOSTAT=status)
    IF (status /= 0)THEN
        WRITE(*,*) "Error in opening inputData.txt"
-       PAUSE;STOP
+       READ(*,*);STOP
    END IF    
    READ(1,*) npar    !number of parameters 
    
@@ -54,7 +54,7 @@ PROGRAM testRGN
    ALLOCATE(xLo(nPar),xHi(nPar),x0(npar),x(nPar),STAT=status)
    IF (status /= 0) THEN
        WRITE(*,*) "Error in allocating lowPar, highPar, and x0" 
-       PAUSE;STOP
+       READ(*,*);STOP
    END IF
    !Initialize the parameters
    xLo=0.0_rk;xHi=0.0_rk
@@ -62,7 +62,7 @@ PROGRAM testRGN
    ALLOCATE(parName(nPar),STAT=status)
    IF (status /= 0) THEN
        WRITE(*,*) "Error in allocating name"
-       PAUSE;STOP
+       READ(*,*);STOP
    END IF
    !Read the parameters Line by Line
    DO i=1,npar
@@ -78,7 +78,7 @@ PROGRAM testRGN
    OPEN (UNIT=1,FILE='states.txt',STATUS='old',ACTION='READ',IOSTAT=status)
    IF (status /= 0)THEN
        WRITE(*,*) "Error in opening states.txt"
-       PAUSE;STOP
+       READ(*,*);STOP
    END IF
    READ(1,*) nState    !number of parameters 
          
@@ -86,7 +86,7 @@ PROGRAM testRGN
    ALLOCATE(stateName(nState),stateVal(nState),STAT=status)
    IF (status /= 0) THEN
        WRITE(*,*) "Error in allocating stateName"
-       PAUSE;STOP
+       READ(*,*);STOP
    END IF
    !Read the parameters Line by Line
    DO i=1,nState
@@ -112,7 +112,7 @@ PROGRAM testRGN
    ALLOCATE(rain(nData),pet(nData),obsQ(nData),STAT=status)
    IF (status /= 0) THEN
        WRITE(*,*) "Error in allocating rainfall-runoff observations"
-       PAUSE;STOP
+       READ(*,*);STOP
    END IF
 !Read the contents in the File
    REWIND(UNIT=1);READ(1,*)
@@ -124,14 +124,14 @@ PROGRAM testRGN
 WRITE(dfm1,'(a,i4,a)')     '(a,', nPar,'g15.7)'
 !Part 2: Run RGN
 !Initialize the RGN default settings
-  CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10, fail=0)
+  CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10_ik, fail=0_ik)
 !Call RGN optimization algorithms
 ! key input parameters: p is the number of parameters to be optimized
 !                       n is the number of residuals
   CALL rgn (objFunc=objFunc, p=nPar, n=nData-nWarmUp+1, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
   IF(error /= 0)then
     WRITE(*,*) message
-    PAUSE
+    READ(*,*)
   END IF
    WRITE(*,dfm1)                "Best parameter set:     ", x
    WRITE(*,'(a,g15.7)')         "Best objfunc value:     ", info%f

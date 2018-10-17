@@ -35,14 +35,14 @@ PROGRAM testRGN
    xhi = [ 1.5_rk,  3.0_rk]                             ! Upper bound
    !Give the format
    WRITE(dfm1,'(a,i4,a)')     '(a,', 2,'g15.7)'
-   CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10, fail=0)
+   CALL setDefaultRgnConvergeSettings (cnvSet=cnv, dump=10_ik, fail=0_ik)
    !
    ! key input parameters: p is the number of parameters to be optimized
    !                       n is the number of residuals
-   CALL rgn (objFunc=objFunc, p=2, n=2, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
+   CALL rgn (objFunc=objFunc, p=2_ik, n=2_ik, x0=x0, xLo=xlo, xHi=Xhi, cnv=cnv, x=x, info=info, error=error, message=message)
    IF(error /= 0)then
      WRITE(*,*) message
-     PAUSE
+     READ(*,*)
    END IF
    WRITE(*,dfm1)                "Best parameter set:     ", x
    WRITE(*,'(a,g15.7)')         "Best objfunc value:     ", info%f
@@ -70,7 +70,7 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    REAL(rk)::timeObj(2)
    CALL CPU_TIME (timeObj(1))
    f = 0.0_rk
-   r(1) = 1-x(1)
+   r(1) = 1.0_rk-x(1)
    r(2)=10.0_rk*(x(2)-x(1)**2)                      ! Compute residual
    f = f + r(1)**2+r(2)**2                          ! Calculate objective function
    f = f/2.0_rk
