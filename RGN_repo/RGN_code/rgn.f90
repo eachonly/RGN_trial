@@ -654,7 +654,7 @@ END SUBROUTINE svdSolve
     REAL(rk), DIMENSION(:), ALLOCATABLE :: v
     INTEGER :: i, n
     n = MINVAL([SIZE(a,1), SIZE(a,2)]) 
-    ALLOCATE(v(n)) 
+    IF (ALLOCATED(v)) DEALLOCATE(v);ALLOCATE(v(n)) 
     FORALL(i=1:n) v(i) = a(i,i)
   END FUNCTION Diag_ele
 
