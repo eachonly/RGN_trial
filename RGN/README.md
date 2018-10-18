@@ -16,18 +16,4 @@ This repository includes two examples to illustrate the application of the RGN a
   - RosenbrockExample: driver code (rgnMain_Rosenbrock.f90)
   - HYMODexample: driver code (rgnMain_Hymod.f90) and HYMOD model code
 
-The implementation is in Fortran-95 and has been compiled and tested using gfortran and Intel Fortran on Windows, as well as gfortran and ifort on Linux.
-
-when compile with gfortran, first switch prompt window to destination folder, and then get the files compiled and linked with the following examples (Example 1: Rosenbrock_example; Example 2: Hymod_example)
-
-Example 1:
-1 cd <Destination Folder>\RGN\PROJ\resenbrock 
-2 gfortran -c -ffree-line-length-none ../../SRC_RGN/constantsMod.f90 ../../SRC_RGN/rgn.f90 ../../SRC_DEMO/rosenbrock/rgnMain_Rosenbrock.f90
-3 gfortran  -o Rosenbrock_example.exe *.o
-4 Rosenbrock_example.exe
-
-Example 2:
-1 cd <Destination Folder>\RGN\PROJ\hymod
-2 gfortran -c -ffree-line-length-none ../../SRC_RGN/constantsMod.f90 ../../SRC_RGN/rgn.f90 ../../SRC_DEMO/hymod/hydroDataMod.f90 ../../SRC_DEMO/hymod/hymod.f90 ../../SRC_DEMO/hymod/rgnMain_Hymod.f90
-3 gfortran  -o Hymod_example.exe *.o
-4 Hymod_example.exe
+This repository contains the RGN algorithm implementation in Fortran-95, which has been tested using the GNU gfortran and Intel Fortran compilers, on Windows and Linux.
