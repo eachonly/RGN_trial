@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "HYMOD_example", "HYMOD_example\HYMOD_example.vfproj", "{8A396F93-9C67-470C-B3EB-0409C0414B5E}"
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "hymod_demo", "..\PROJ\hymod\hymod_demo.vfproj", "{8A396F93-9C67-470C-B3EB-0409C0414B5E}"
 EndProject
-Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "Rosenbrock_example", "Rosenbrock_example\Rosenbrock_example.vfproj", "{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}"
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "rosenbrock_demo", "..\PROJ\rosenbrock\rosenbrock_demo.vfproj", "{49C26CBF-0C41-4696-9CBE-97CF179D2E2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

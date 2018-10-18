@@ -27,7 +27,7 @@
 		<Filter Name="Header Files" Filter="fi;fd"/>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
-		<File RelativePath="..\RGN_code\constantsMod.f90"/>
-		<File RelativePath="..\RGN_code\rgn.f90"/>
-		<File RelativePath=".\rgnMain_Rosenbrock.f90"/></Filter></Files>
+		<File RelativePath="..\..\SRC_RGN\constantsMod.f90"/>
+		<File RelativePath="..\..\SRC_RGN\rgn.f90"/>
+		<File RelativePath="..\..\SRC_DEMO\Rosenbrock\rgnMain_Rosenbrock.f90"/></Filter></Files>
 	<Globals/></VisualStudioProject>

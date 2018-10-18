@@ -6,7 +6,7 @@ PROGRAM testRGN
 ! Last modified: October 2018 AD, Hohai University, China
 ! Copyright, Youwei Qin, Dmitri Kavetski, Michael Leonard, 2018-2023. All rights reserved.
 ! ---
-! This is the example for calibrating Rosenbrock function with RGN
+! This is the demo for calibrating Rosenbrock function with RGN
 ! The core of RGN is recorded in rgn.f90
 ! The data exchange between RGN and Rosenbrock function is through "objFunc"
 ! and the sum of least squares objective function value is evaluated and returned to RGN subroutine.

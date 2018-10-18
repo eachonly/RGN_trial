@@ -30,9 +30,9 @@
 		<File RelativePath=".\inputData.txt"/>
 		<File RelativePath=".\states.txt"/></Filter>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
-		<File RelativePath="..\RGN_code\constantsMod.f90"/>
-		<File RelativePath=".\hydroDataMod.f90"/>
-		<File RelativePath=".\hymod.f90"/>
-		<File RelativePath="..\RGN_code\rgn.f90"/>
-		<File RelativePath=".\rgnMain_Hymod.f90"/></Filter></Files>
+		<File RelativePath="..\..\SRC_RGN\constantsMod.f90"/>
+		<File RelativePath="..\..\SRC_DEMO\Hymod\hydroDataMod.f90"/>
+		<File RelativePath="..\..\SRC_DEMO\Hymod\hymod.f90"/>
+		<File RelativePath="..\..\SRC_RGN\rgn.f90"/>
+		<File RelativePath="..\..\SRC_DEMO\Hymod\rgnMain_Hymod.f90"/></Filter></Files>
 	<Globals/></VisualStudioProject>

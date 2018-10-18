@@ -6,7 +6,7 @@ PROGRAM testRGN
 ! Last modified: October 2018 AD, Hohai University, China
 ! Copyright, Youwei Qin, Dmitri Kavetski, Michael Leonard, 2018-2023. All rights reserved.
 ! ---
-! This is the example for calibrating HYMOD with RGN
+! This is the demo for calibrating HYMOD with RGN
 ! The core of RGN is recorded in rgn.f90; the core of HYMOD is recoded in hymod.f90
 ! The data exchange between RGN and HYMOD is through "objFunc", where the HYMOD is called,
 ! and the sum of least squares objective function value is evaluated and returned to RGN subroutine.
@@ -194,7 +194,7 @@ SUBROUTINE objFunc (nPar, nSim, x, r, f, timeFunc, error, message)
    endif
     
    !Warnup model so that memory of arbitrary initial conditions is forgotten
-   OPEN (UNIT=1,FILE='dischagenew.txt') 
+   OPEN (UNIT=1,FILE='dischargenew.txt') 
    DO i = 1, nWarmUp-1
        CALL HyMod(precip=rain(i), pet=pet(i), S=S,    &
        Smax=Smax, b=b, alpha=alpha, Ks=Ks, Kq=Kq,   &
