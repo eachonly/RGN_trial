@@ -21,13 +21,13 @@ The implementation is in Fortran-95 and has been compiled and tested using gfort
 when compile with gfortran, first switch prompt window to destination folder, and then get the files compiled and linked with the following examples (Example 1: Rosenbrock_example; Example 2: Hymod_example)
 
 Example 1:
->cd <Destination folder>\RGN_repo\Rosenbrock_example
->gfortran -c -ffree-line-length-none ../RGN_Code/constantsMod.f90 ../RGN_Code/rgn.f90 rgnMain_Rosenbrock.f90
->gfortran  -o Rosenbrock_example.exe *.o
->Rosenbrock_example.exe
+1 cd <Destination Folder>\RGN\PROJ\resenbrock 
+2 gfortran -c -ffree-line-length-none ../../SRC_RGN/constantsMod.f90 ../../SRC_RGN/rgn.f90 ../../SRC_DEMO/rosenbrock/rgnMain_Rosenbrock.f90
+3 gfortran  -o Rosenbrock_example.exe *.o
+4 Rosenbrock_example.exe
 
 Example 2:
->cd <Destination folder>\RGN_repo\HYMOD_example
->gfortran -c -ffree-line-length-none ../RGN_Code/constantsMod.f90 ../RGN_Code/rgn.f90 hydroDataMod.f90 hymod.f90 rgnMain_Hymod.f90
->gfortran  -o Hymod_example.exe *.o
->Hymod_example.exe
+1 cd <Destination Folder>\RGN\PROJ\hymod
+2 gfortran -c -ffree-line-length-none ../../SRC_RGN/constantsMod.f90 ../../SRC_RGN/rgn.f90 ../../SRC_DEMO/hymod/hydroDataMod.f90 ../../SRC_DEMO/hymod/hymod.f90 ../../SRC_DEMO/hymod/rgnMain_Hymod.f90
+3 gfortran  -o Hymod_example.exe *.o
+4 Hymod_example.exe
