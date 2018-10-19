@@ -1,0 +1,21 @@
+How to compile and run hydmo demo with ifort
+option 1) use makefile.ifort, see instructions inside the file
+
+
+option 2) generate batch file
+make -f makefile.ifort clean
+make -f makefile.ifrot -n >ifort.bat
+chmod +x ifort.bat
+./ifort.bat
+./hymod_demo.exe
+
+How to compile and run hydmo demo with gfortran
+option 1) use makefile.gfortran, see instructions inside the file
+
+
+option 2) generate batch file
+make -f makefile.gfortran clean
+make -f makefile.gfortran -n >gfortran.bat
+chmod +x gfortran.bat
+./gfortran.bat
+./hymod_demo.exe
