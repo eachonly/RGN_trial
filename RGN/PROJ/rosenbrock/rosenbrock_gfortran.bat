@@ -1,14 +1,14 @@
 REM compile and run RGN on rosenbrock
 :: Instructons: 1) add PATH for gfortran
-::				2) compile: gfortran -c -ffree-line-length-none ../../SRC_RGN/constantsMod.f90 ../../SRC_RGN/rgn.f90 ../../SRC_DEMO/rosenbrock/rgnMain_Rosenbrock.f90
+::				2) compile: gfortran -c -ffree-line-length-none ..\..\SRC_RGN\constantsMod.f90 ..\..\SRC_RGN\rgn.f90 ..\..\SRC_DEMO\rosenbrock\rgnMain_Rosenbrock.f90
 ::              3) link: gfortran  -o rosenbrock_demo.exe *.o
 ::              4) run: rosenbrock_demo.exe
 
 echo compile rosenbrock demo with gfortran
 ::add gfortran path to environmental variable, set "PATH=%PATH%" 
 ::or set gfortran PATH as below
-set "PATH=C:/cygwin64/bin/"
-gfortran -c -ffree-line-length-none ../../SRC_RGN/constantsMod.f90 ../../SRC_RGN/rgn.f90 ../../SRC_DEMO/rosenbrock/rgnMain_Rosenbrock.f90
+set "PATH=C:\cygwin64\bin\"
+gfortran -c -ffree-line-length-none ..\..\SRC_RGN\constantsMod.f90 ..\..\SRC_RGN\rgn.f90 ..\..\SRC_DEMO\rosenbrock\rgnMain_Rosenbrock.f90
 gfortran  -o rosenbrock_demo.exe *.o
 rosenbrock_demo.exe
 PAUSE
