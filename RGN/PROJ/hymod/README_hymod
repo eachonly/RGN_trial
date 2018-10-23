@@ -1,21 +1,27 @@
-How to compile and run hydmo demo with ifort
-option 1) use makefile.ifort, see instructions inside the file
+A)How to compile and run hydmo demo with ifort in Linux
+option 1) use makefile.hymod_ifort, see instructions inside the file
 
-
-option 2) generate batch file
-make -f makefile.ifort clean
-make -f makefile.ifrot -n >ifort.bat
-chmod +x ifort.bat
-./ifort.bat
+option 2) automatically generate batch file for compilng hymod demo
+make -f makefile.hymod_ifort clean
+make -f makefile.hymod_ifrot -n >hymod_ifort.bat
+chmod +x hymod_ifort.bat
+./hymod_ifort.bat
 ./hymod_demo.exe
 
-How to compile and run hydmo demo with gfortran
-option 1) use makefile.gfortran, see instructions inside the file
+B)How to compile and run hydmo demo with ifort in Windows
+option 1) use hymod_ifort.bat, see instructions inside the file
+option 2) use VS+IVF
 
+C)How to compile and run hydmo demo with gfortran in Linux
+option 1) use makefile.hymod_gfortran, see instructions inside the file
 
-option 2) generate batch file
-make -f makefile.gfortran clean
-make -f makefile.gfortran -n >gfortran.bat
-chmod +x gfortran.bat
-./gfortran.bat
+option 2) automatically generate batch file for compilng hymod demo
+make -f makefile.hymod_gfortran clean
+make -f makefile.hymod_gfortran -n >hymod_gfortran.bat
+chmod +x hymod_gfortran.bat
+./hymod_gfortran.bat
 ./hymod_demo.exe
+
+D)How to compile and run hydmo demo with gfortran in Windows
+option 1) use hymod_gfortran.bat, see instructions inside the file
+option 2) use gfortran command prompt
