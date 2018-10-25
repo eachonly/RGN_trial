@@ -1,5 +1,10 @@
 A)How to compile and run hymod demo with ifort in Linux
-option 1) use makefile.hymod_ifort, see instructions inside the file
+option 1) use makefile.hymod_ifort
+to compile using makefile with ifort
+  1) make -f makefile.hymod_ifort
+  2) ./hymod_demo.exe
+to remove intermediate files
+  1) make -f makefile.hymod_ifort clean
 
 option 2) automatically generate batch file for compiling hymod demo
 make -f makefile.hymod_ifort clean
@@ -9,11 +14,16 @@ chmod +x hymod_ifort.bat
 ./hymod_demo.exe
 
 B)How to compile and run hymod demo with ifort in Windows
-option 1) use hymod_ifort.bat, see instructions inside the file
+option 1) use hymod_ifort.bat
 option 2) use VS+IVF
 
 C)How to compile and run hymod demo with gfortran in Linux
-option 1) use makefile.hymod_gfortran, see instructions inside the file
+option 1) use makefile.hymod_gfortran
+to compile and run using makefile with gfortran
+  1) make -f makefile.hymod_gfortran
+  2) ./hymod_demo.exe
+to remove intermediate files
+  1) make -f makefile.hymod_gfortran clean
 
 option 2) automatically generate batch file for compiling hymod demo
 make -f makefile.hymod_gfortran clean
@@ -23,5 +33,5 @@ chmod +x hymod_gfortran.bat
 ./hymod_demo.exe
 
 D)How to compile and run hymod demo with gfortran in Windows
-option 1) use hymod_gfortran.bat, see instructions inside the file
+option 1) use hymod_gfortran.bat
 option 2) use gfortran command prompt
