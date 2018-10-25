@@ -14,9 +14,9 @@ This repository includes two examples to illustrate the application of the RGN a
 
   - SCR_RGN: the RGN algorithm (rgn.f90) and an auxiliary module (constantsMod.f90)
   - SCR_DEMO\rosenbrock: driver code (rgnMain_Rosenbrock.f90)
-  - PROJ\rosenbrock:vfproj files, batches files, makefiles, input/optput files for rosenbrock example
+  - PROJ\rosenbrock:vfproj files, batches files, makefiles, input/output files for rosenbrock example
   - SCR_DEMO\hymod: driver code (rgnMain_Hymod.f90) and HYMOD model code
-  - PROJ\hymod:vfproj files, batches files, makefiles, input/optput files for hymod example
+  - PROJ\hymod:vfproj files, batches files, makefiles, input/output files for hymod example
   - SLN: the sln files from Visual Studio
 
 This repository contains the RGN algorithm implementation in Fortran-95, which has been tested using the GNU gfortran and Intel Fortran compilers, on Windows and Linux.
