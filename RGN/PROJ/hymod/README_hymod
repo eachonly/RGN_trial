@@ -6,11 +6,16 @@ to compile using makefile with ifort
 to remove intermediate files
   1) make -f makefile.hymod_ifort clean
 
-option 2) automatically generate batch file for compiling hymod demo
+option 2) manually create a bash file for compiling hymod demo
+bash  ./hymod_ifort.sh
+./hymod_demo.exe
+
+  
+option 3) automatically generate bash file for compiling hymod demo
 make -f makefile.hymod_ifort clean
-make -f makefile.hymod_ifort -n >hymod_ifort.bat
-chmod +x hymod_ifort.bat
-./hymod_ifort.bat
+make -f makefile.hymod_ifort -n >hymod_ifort.sh
+chmod +x hymod_ifort.sh
+bash ./hymod_ifort.sh
 ./hymod_demo.exe
 
 B)How to compile and run hymod demo with ifort in Windows
@@ -24,12 +29,16 @@ to compile and run using makefile with gfortran
   2) ./hymod_demo.exe
 to remove intermediate files
   1) make -f makefile.hymod_gfortran clean
+  
+option 2) manually create a bash file for compiling hymod demo
+bash  ./hymod_gfortran.sh
+./hymod_demo.exe
 
-option 2) automatically generate batch file for compiling hymod demo
+option 3) automatically generate batch file for compiling hymod demo
 make -f makefile.hymod_gfortran clean
-make -f makefile.hymod_gfortran -n >hymod_gfortran.bat
-chmod +x hymod_gfortran.bat
-./hymod_gfortran.bat
+make -f makefile.hymod_gfortran -n >hymod_gfortran.sh
+chmod +x hymod_gfortran.sh
+bash ./hymod_gfortran.sh
 ./hymod_demo.exe
 
 D)How to compile and run hymod demo with gfortran in Windows

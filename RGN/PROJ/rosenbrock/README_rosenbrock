@@ -6,11 +6,15 @@ to compile using makefile with ifort
 to remove intermediate files
   1) make -f makefile.rosenbrock_ifort clean
 
-option 2) automatically generate batch file for compilng rosenbrock demo
+option 2) manually create a bash file for compiling rosenbrock demo
+bash  ./rosenbrock_ifort.sh
+./rosenbrock_demo.exe
+
+option 3) automatically generate bash file for compiling rosenbrock demo
 make -f makefile.rosenbrock_ifort clean
-make -f makefile.rosenbrock_ifort -n >rosenbrock_ifort.bat
-chmod +x rosenbrock_ifort.bat
-./rosenbrock_ifort.bat
+make -f makefile.rosenbrock_ifort -n >rosenbrock_ifort.sh
+chmod +x rosenbrock_ifort.sh
+bash ./rosenbrock_ifort.sh
 ./rosenbrock_demo.exe
 
 B)How to compile and run rosenbrock demo with ifort in Windows
@@ -25,11 +29,15 @@ to compile and run using makefile with gfortran
 to remove intermediate files
   1) make -f makefile.rosenbrock_gfortran clean
 
-option 2) automatically generate batch file for compilng rosenbrock demo
+option 2) manually create a bash file for compiling rosenbrock demo
+bash  ./rosenbrock_gfortran.sh
+./rosenbrock_demo.exe
+
+option 3) automatically generate bash file for compiling rosenbrock demo
 make -f makefile.rosenbrock_gfortran clean
-make -f makefile.rosenbrock_gfortran -n >rosenbrock_gfortran.bat
-chmod +x rosenbrock_gfortran.bat
-./rosenbrock_gfortran.bat
+make -f makefile.rosenbrock_gfortran -n >rosenbrock_gfortran.sh
+chmod +x rosenbrock_gfortran.sh
+bash ./rosenbrock_gfortran.sh
 ./rosenbrock_demo.exe
 
 D)How to compile and run rosenbrock demo with gfortran in Windows
