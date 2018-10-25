@@ -3,7 +3,7 @@ option 1) use makefile.rosenbrock_ifort, see instructions inside the file
 
 option 2) automatically generate batch file for compilng rosenbrock demo
 make -f makefile.rosenbrock_ifort clean
-make -f makefile.rosenbrock_ifrot -n >rosenbrock_ifort.bat
+make -f makefile.rosenbrock_ifort -n >rosenbrock_ifort.bat
 chmod +x rosenbrock_ifort.bat
 ./rosenbrock_ifort.bat
 ./rosenbrock_demo.exe
