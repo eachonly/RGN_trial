@@ -10,7 +10,7 @@ set /p input=Is gfortran on the path environment variable? (Y/N)
 
 if /i "%input%"=="N" (
   echo Assuming PATH=C:\cygwin64\bin\ (otherwise, update .bat file)
-  set "PATH=C:\cygwin64\bin\"
+  PATH=%PATH%;C:\cygwin64\bin\
 )
 
 :: Compile
