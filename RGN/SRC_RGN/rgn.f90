@@ -55,6 +55,7 @@ MODULE rgnMod
    TYPE rgnInfoType
       INTEGER(ik) :: nIter, termFlag, nEval
       REAL(rk) :: f, cpuTime,objTime
+      CHARACTER(256)::termInfo(4)
    END TYPE rgnInfoType
    
    TYPE rgnSetType
@@ -198,6 +199,12 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       forceRelease = NO
       noReduction = 0; noRelChangeF = 0; noRelChangePar = 0
       info%termFlag = 0; info%nEval = 0
+      
+   ! Termination flag information for each termination code
+      info%termInfo(1)="Success: maximal iteration exceeded"
+      info%termInfo(2)="Success: no sufficient progress in objFunc"
+      info%termInfo(3)="Success: no change in objFunc"
+      info%termInfo(4)="Success: no sufficient change in parameter sets"
       CALL CPU_TIME (time(1))
       x = x0
       CALL objFunc (nPar=p, nSim=n, x=x, r=rBest, f=f, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
@@ -474,7 +481,7 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       info%nIter = nIter; info%f = f
       WRITE(message,'(a,i2,a,g15.6)') 'RGN ended with termination code: ', info%termFlag, ' f=', info%f
       IF (cnv%dumpResults >= 1) THEN
-         WRITE(99,'(a,i2)')    '>>>>> RGN ended with termination code: ', info%termFlag
+         WRITE(99,'(a,i2,2x,a)')    '>>>>> RGN ended with termination code: ', info%termFlag, trim(adjustl(info%termInfo(info%termFlag)))
          WRITE(99,'(a,i8)')    '      number of function calls:    ', info%nEval
          WRITE(99,'(a,f10.3)') '      cpu time (sec):               ', info%cpuTime
          CLOSE (unit=99)

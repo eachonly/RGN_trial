@@ -137,7 +137,7 @@ WRITE(dfm1,'(a,i4,a)')     '(a,', nPar,'g15.7)'
    WRITE(*,'(a,g15.7)')         "Best objfunc value:     ", info%f
    WRITE(*,'(a,4x,i0)')         "Number of objfunc calls:", info%nEval
    WRITE(*,'(a,4x,i0)')         "Total iteration:         ", info%nIter
-   WRITE(*,'(a,4x,i0)')         "Termination flag:        ", info%termFlag
+   WRITE(*,'(a,4x,i0,4x,a)')    "Termination flag:        ", info%termFlag, trim(adjustl(info%termInfo(info%termFlag)))
    WRITE(*,'(a,g15.7)')         "CPU time:                ",info%cpuTime
   DEALLOCATE(xLo,xHi,x0,x)
   DEALLOCATE(parName,stateName,stateVal)
