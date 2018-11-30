@@ -201,10 +201,10 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       info%termFlag = 0; info%nEval = 0
       
    ! Termination flag information for each termination code
-      info%termInfo(1)="Failed to converge: maximal iteration exceeded"
-      info%termInfo(2)="Converged: negligible change in objFunc"
-      info%termInfo(3)="Converged: no change in objFunc"
-      info%termInfo(4)="Converged: parameter sets have converged"
+      info%termInfo(1)="Converged: no change in objFunc"
+      info%termInfo(2)="Converged: change in objFunc below tolerance"
+      info%termInfo(3)="Converged: changes in parameter values below tolerance"
+      info%termInfo(4)="Failed to converge: maximum number of iterations reached"
       CALL CPU_TIME (time(1))
       x = x0
       CALL objFunc (nPar=p, nSim=n, x=x, r=rBest, f=f, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
@@ -442,11 +442,13 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
             h = MAX (h/set%beta, hLo)
          END IF
    !
-   ! Check for convergence
-         IF (nIter >= cnv%iterMax) THEN
-            info%termFlag = 1; EXIT
-         END IF     
-         IF (nIter > 1) THEN 
+   ! Check for convergence 
+         IF (nIter > 1) THEN
+            noReduction = MERGE (noReduction+1_ik, 0_ik, f >= fOldBest)
+            IF (noReduction >= cnv%noReduction) THEN
+               info%termFlag = 1; EXIT
+            END IF 
+             
             noRelChangeF = 0
             DO k = MAX(1,nIter - cnv%noRelChangeF + 1), nIter 
                 IF (ABS((fOptSeries(k)-fOptSeries(nIter))/(fOptSeries(k)+cnv%tolsafe)) <= cnv%noRelChangeFTol) THEN
@@ -457,11 +459,6 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
             IF (noRelChangeF >= cnv%noRelChangeF) THEN
               info%termFlag = 2; EXIT
             ENDIF
-            
-			   noReduction = MERGE (noReduction+1_ik, 0_ik, f >= fOldBest)
-            IF (noReduction >= cnv%noReduction) THEN
-               info%termFlag = 3; EXIT
-            END IF
  
             maxRelPar = -HUGE(f)
             DO k = 1, p
@@ -471,9 +468,12 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
             END DO
             noRelChangePar = MERGE (noRelChangePar+1_ik, 0_ik, maxRelPar >= 0.0_rk .and. maxRelPar < cnv%noRelChangeParTol)
             IF (noRelChangePar >= cnv%noRelChangePar) THEN
-               info%termFlag = 4; EXIT
+               info%termFlag = 3; EXIT
             END IF
          END IF
+         IF (nIter >= cnv%iterMax) THEN
+            info%termFlag = 4; EXIT
+         END IF  
       END DO iterLoop
    !
    ! Save optional information
