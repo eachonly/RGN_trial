@@ -201,10 +201,10 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       info%termFlag = 0; info%nEval = 0
       
    ! Termination flag information for each termination code
-      info%termInfo(1)="Success: maximal iteration exceeded"
-      info%termInfo(2)="Success: no sufficient progress in objFunc"
-      info%termInfo(3)="Success: no change in objFunc"
-      info%termInfo(4)="Success: no sufficient change in parameter sets"
+      info%termInfo(1)="Failed to converge: maximal iteration exceeded"
+      info%termInfo(2)="Converged: negligible change in objFunc"
+      info%termInfo(3)="Converged: no change in objFunc"
+      info%termInfo(4)="Converged: parameter sets have converged"
       CALL CPU_TIME (time(1))
       x = x0
       CALL objFunc (nPar=p, nSim=n, x=x, r=rBest, f=f, timeFunc=time4fcall, error=error, message=message); info%nEval = info%nEval + 1; IF (error /=0) GO TO 1
