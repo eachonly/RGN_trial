@@ -202,8 +202,8 @@ SUBROUTINE rgn (objFunc, p, n, x0, xLo, xHi, cnv, x, info, error, message, decFi
       
    ! Termination flag information for each termination code
       info%termInfo(1)="Converged: no change in objFunc"
-      info%termInfo(2)="Converged: changes in solution variables below tolerance"
-      info%termInfo(3)="Converged: changes in parameter values below tolerance"
+      info%termInfo(2)="Converged: change in objFunc below tolerance"
+      info%termInfo(3)="Converged: changes in solution variables below tolerance"
       info%termInfo(4)="Failed to converge: maximum number of iterations reached"
       CALL CPU_TIME (time(1))
       x = x0
